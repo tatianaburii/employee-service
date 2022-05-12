@@ -1,16 +1,18 @@
 USE EMPLOYEE_SERVICE;
-CREATE TABLE DEPARTMENT
+CREATE TABLE DEPARTMENTS
 (
-    ID              integer      NOT NULL AUTO_INCREMENT,
-    DEPARTMENT_NAME varchar(100) NOT NULL,
+    ID              integer AUTO_INCREMENT,
+    DEPARTMENT_NAME varchar(255) NOT NULL,
+    CREATED_AT      varchar(30),
+    IS_ACTIVE       TINYINT,
     CONSTRAINT DEPARTMENT_ID PRIMARY KEY (ID),
     UNIQUE (DEPARTMENT_NAME)
 );
 
 CREATE TABLE EMPLOYEE
 (
-    ID            integer      NOT NULL AUTO_INCREMENT,
-    EMPLOYEE_NAME varchar(100) NOT NULL,
+    ID            integer AUTO_INCREMENT,
+    EMPLOYEE_NAME varchar(255) NOT NULL,
     EMAIL         varchar(30)  NOT NULL,
     PHONE         varchar(20)  NOT NULL,
     DEPARTMENT_ID integer      NOT NULL,
