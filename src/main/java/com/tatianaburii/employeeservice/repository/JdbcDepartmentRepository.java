@@ -17,7 +17,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 
 public class JdbcDepartmentRepository implements DepartmentRepository {
-    private static final String SQL_INSERT = "INSERT INTO DEPARTMENTS (DEPARTMENT_NAME, CREATED_AT, IS_ACTIVE) VALUES(?,?,?)";
+    private static final String SQL_INSERT = "INSERT INTO DEPARTMENT (DEPARTMENT_NAME, CREATED_AT, IS_ACTIVE) VALUES(?,?,?)";
     Connection connect;
 
     @Override
@@ -39,7 +39,7 @@ public class JdbcDepartmentRepository implements DepartmentRepository {
     public int findIdByName(String name) {
         try {
             Statement statement = connect.createStatement();
-            String sql = "SELECT ID FROM DEPARTMENTS WHERE DEPARTMENT_NAME = '" + name + "'";
+            String sql = "SELECT ID FROM DEPARTMENT WHERE DEPARTMENT_NAME = '" + name + "'";
             ResultSet resultSet = statement.executeQuery(sql);
             if(resultSet.next()) {
                 return resultSet.getInt("ID");

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @Controller
@@ -28,9 +30,11 @@ public class DepartmentController {
     }
 
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
-    public String create(@ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult, Model model) {
+    public String create(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult, Model model) {
         if (!departmentService.isUnique(departmentRequest.getName())) {
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
+        }
+        if (bindingResult.hasErrors()){
             return "create-department";
         }
         departmentService.save(departmentRequest);
