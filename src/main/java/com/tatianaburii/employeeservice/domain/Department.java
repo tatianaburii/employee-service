@@ -1,19 +1,14 @@
 package com.tatianaburii.employeeservice.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class Department {
     private int id;
     private String name;

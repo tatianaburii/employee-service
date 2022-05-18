@@ -1,6 +1,7 @@
 package com.tatianaburii.employeeservice.controller;
 
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
+import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -39,7 +42,13 @@ public class DepartmentController {
         }
         departmentService.save(departmentRequest);
         model.addAttribute("department", new DepartmentRequest());
-        return "create-department";//ToDo return "departments" view;
+        return "redirect:/departments";
+    }
+    @GetMapping
+    public String findAll(Model model){
+        List<Department> departments = departmentService.findAll();
+        model.addAttribute("departments", departments);
+        return "departments";
     }
 
 
