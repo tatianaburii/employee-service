@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
@@ -27,5 +29,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean isUnique(String name) {
         return repository.findIdByName(name) < 0;
+    }
+
+    @Override
+    public List<Department> findAll() {
+        return repository.findAll();
     }
 }
