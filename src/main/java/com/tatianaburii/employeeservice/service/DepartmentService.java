@@ -9,4 +9,5 @@ public interface DepartmentService {
     void save(DepartmentRequest departmentRequest);
     boolean isUnique(String name);
     List<Department> findAll();
+    public void delete(int id);
 }

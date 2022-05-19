@@ -8,4 +8,5 @@ public interface DepartmentRepository {
     void save(Department department);
     int findIdByName(String name);
     List<Department> findAll();
+    public void delete(int id);
 }
