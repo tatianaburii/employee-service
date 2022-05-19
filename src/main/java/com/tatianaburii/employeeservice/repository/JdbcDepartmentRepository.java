@@ -19,6 +19,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class JdbcDepartmentRepository implements DepartmentRepository {
     private static final String SQL_INSERT = "INSERT INTO DEPARTMENT (DEPARTMENT_NAME, CREATED_AT, IS_ACTIVE) VALUES(?,?,?)";
     private static final String SQL_SELECT = "SELECT ID, DEPARTMENT_NAME , CREATED_AT, IS_ACTIVE  FROM EMPLOYEE_SERVICE.DEPARTMENT where `IS_ACTIVE` = TRUE";
+    private static final String SQL_DELETE = "UPDATE EMPLOYEE_SERVICE.DEPARTMENT SET IS_ACTIVE = false WHERE id = ?";
     Connection connect;
 
     @Override
@@ -71,6 +72,16 @@ public class JdbcDepartmentRepository implements DepartmentRepository {
         }
         return departments;
     }
-
+    @Override
+    public void delete(int id) {
+        try {
+            PreparedStatement preparedStatement = connect.prepareStatement(SQL_DELETE);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
