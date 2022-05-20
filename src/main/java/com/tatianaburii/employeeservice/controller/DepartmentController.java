@@ -34,22 +34,43 @@ public class DepartmentController {
         if (!departmentService.isUnique(departmentRequest.getName())) {
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "create-department";
         }
         departmentService.save(departmentRequest);
         model.addAttribute("department", new DepartmentRequest());
         return "redirect:/departments";
     }
+
     @GetMapping
-    public String findAll(Model model){
+    public String findAll(Model model) {
         List<Department> departments = departmentService.findAll();
         model.addAttribute("departments", departments);
         return "departments";
     }
-    @GetMapping( value = {"{id}/delete"})
-    public String delete(@PathVariable("id")int id){
+
+    @GetMapping(value = {"/{id}/delete"})
+    public String delete(@PathVariable("id") int id) {
         departmentService.delete(id);
+        return "redirect:/departments";
+    }
+
+    @GetMapping(value = "/{id}/update")
+    public String showUpdateForm(@PathVariable int id, Model model) {
+        Department department = departmentService.findById(id);
+        model.addAttribute("department", department);
+        return "update-department";
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String updateDepartment(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult) {
+        if (!departmentService.isUnique(departmentRequest.getName())) {
+            bindingResult.rejectValue("name", "name", "A department already exists for this name.");
+        }
+        if (bindingResult.hasErrors()) {
+            return "update-department";
+        }
+        departmentService.update(departmentRequest);
         return "redirect:/departments";
     }
 }

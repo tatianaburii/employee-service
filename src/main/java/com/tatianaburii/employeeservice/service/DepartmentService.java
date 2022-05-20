@@ -10,4 +10,6 @@ public interface DepartmentService {
     boolean isUnique(String name);
     List<Department> findAll();
     public void delete(int id);
+    public void update(DepartmentRequest departmentRequest);
+    Department findById(int id);
 }
