@@ -29,8 +29,8 @@
             <td>${department.id}</td>
             <td>${department.name}</td>
             <td>${department.createdAt}</td>
-            <td><a href="${department.id}/edit">Edit</a></td>
-            <td><a href="${department.id}/delete">Delete</a></td>
+            <td><a href="departments/${department.id}/update">Edit</a></td>
+            <td><a href="departments/${department.id}/delete">Delete</a></td>
         </tr>
     </c:forEach>
 </table>

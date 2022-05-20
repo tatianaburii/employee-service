@@ -40,4 +40,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void delete(int id) {
         repository.delete(id);
     }
+
+    @Override
+    public void update(DepartmentRequest departmentRequest) {
+        repository.update(departmentRequest);
+
+    }
+
+    @Override
+    public Department findById(int id) {
+        return repository.findById(id);
+    }
 }
