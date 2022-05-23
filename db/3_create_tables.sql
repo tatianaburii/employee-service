@@ -15,10 +15,12 @@ CREATE TABLE EMPLOYEE
     EMPLOYEE_NAME varchar(255) NOT NULL,
     EMAIL         varchar(30)  NOT NULL,
     PHONE         varchar(20)  NOT NULL,
+    CREATED_AT      varchar(30),
+    IS_ACTIVE       TINYINT,
     DEPARTMENT_ID integer      NOT NULL,
     PRIMARY KEY (ID),
     FOREIGN KEY (DEPARTMENT_ID) REFERENCES DEPARTMENT (ID),
-    UNIQUE (EMAIL, PHONE)
+    UNIQUE (EMAIL)
 );
 
 
