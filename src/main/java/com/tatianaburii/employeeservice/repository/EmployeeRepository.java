@@ -1,6 +1,5 @@
 package com.tatianaburii.employeeservice.repository;
 
-import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 
 import java.util.List;
@@ -11,4 +10,6 @@ public interface EmployeeRepository {
     int findIdByEmail(String email);
 
     List<Employee> findAll();
+
+    void delete(int id);
 }

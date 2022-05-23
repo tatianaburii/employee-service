@@ -1,6 +1,5 @@
 package com.tatianaburii.employeeservice.repository;
 
-import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -78,4 +77,16 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
         return employees;
     }
 
+    @Override
+    public void delete(int id) {
+        try {
+            String query = "UPDATE EMPLOYEE_SERVICE.EMPLOYEE SET IS_ACTIVE = false WHERE id = ?";
+            PreparedStatement preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
