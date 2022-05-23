@@ -1,6 +1,7 @@
 package com.tatianaburii.employeeservice.controller;
 
 import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
+import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -33,7 +35,7 @@ public class EmployeeController {
     }
 
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("employee")EmployeeRequest employeeRequest, BindingResult bindingResult, Model model) {
+    public String create(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult, Model model) {
         if (!employeeService.isUnique(employeeRequest.getEmail())) {
             bindingResult.rejectValue("email", "email", "A employee already exists for this email.");
         }
@@ -43,6 +45,13 @@ public class EmployeeController {
         }
         employeeService.save(employeeRequest);
         model.addAttribute("employee", new EmployeeRequest());
-        return "redirect:/employees/add";//todo: "redirect:/employees"
+        return "redirect:/employees";
+    }
+
+    @GetMapping
+    public String findAll(Model model) {
+        List<Employee> employees = employeeService.findAll();
+        model.addAttribute("employees", employees);
+        return "employees";
     }
 }
