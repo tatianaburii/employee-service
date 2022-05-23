@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
@@ -30,5 +32,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public boolean isUnique(String email) {
         return repository.findIdByEmail(email) < 0;
+    }
+
+    @Override
+    public List<Employee> findAll() {
+        return repository.findAll();
     }
 }

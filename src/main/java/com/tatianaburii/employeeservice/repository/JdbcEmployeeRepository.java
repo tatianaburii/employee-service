@@ -1,11 +1,15 @@
 package com.tatianaburii.employeeservice.repository;
 
+import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -48,6 +52,30 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<Employee> findAll() {
+        ArrayList<Employee> employees = new ArrayList<>();
+        try {
+            Statement statement = connect.createStatement();
+            String query = "SELECT *  FROM EMPLOYEE_SERVICE.EMPLOYEE where `IS_ACTIVE` = TRUE";
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("ID");
+                String name = resultSet.getString("EMPLOYEE_NAME");
+                String phone = resultSet.getString("PHONE");
+                String email = resultSet.getString("EMAIL");
+                LocalDateTime createdAt = LocalDateTime.parse(resultSet.getString("CREATED_AT"));
+                boolean active = resultSet.getBoolean("IS_ACTIVE");
+                int departmentId = resultSet.getInt("DEPARTMENT_ID");
+                employees.add(new Employee(id, name, phone, email, createdAt, active, departmentId));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
     }
 
 }
