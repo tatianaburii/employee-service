@@ -1,5 +1,6 @@
 package com.tatianaburii.employeeservice.repository;
 
+import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -83,6 +84,46 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
             String query = "UPDATE EMPLOYEE_SERVICE.EMPLOYEE SET IS_ACTIVE = false WHERE id = ?";
             PreparedStatement preparedStatement = connect.prepareStatement(query);
             preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Employee findById(int id){
+        try {
+            Statement statement = connect.createStatement();
+            String sql = "SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE ID = '" + id + "'";
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.next()) {
+                int employeeId = resultSet.getInt("ID");
+                String name = resultSet.getString("EMPLOYEE_NAME");
+                String phone = resultSet.getString("PHONE");
+                String email = resultSet.getString("EMAIL");
+                LocalDateTime createdAt = LocalDateTime.parse(resultSet.getString("CREATED_AT"));
+                boolean active = resultSet.getBoolean("IS_ACTIVE");
+                int departmentId = resultSet.getInt("DEPARTMENT_ID");
+                return new Employee(employeeId, name, phone, email, createdAt, active, departmentId);
+            }
+            statement.close();
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(EmployeeRequest employeeRequest) {
+        try {
+            String query = "UPDATE EMPLOYEE_SERVICE.EMPLOYEE SET EMPLOYEE_NAME =?, PHONE=?, EMAIL=?, DEPARTMENT_ID=? WHERE ID=?";
+            PreparedStatement preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setString(1, employeeRequest.getName());
+            preparedStatement.setString(2, employeeRequest.getPhone());
+            preparedStatement.setString(3, employeeRequest.getEmail());
+            preparedStatement.setInt(4, employeeRequest.getDepartmentId());
+            preparedStatement.setInt(5, employeeRequest.getId());
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {

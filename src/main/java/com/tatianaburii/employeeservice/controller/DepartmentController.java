@@ -31,7 +31,7 @@ public class DepartmentController {
 
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult, Model model) {
-        if (!departmentService.isUnique(departmentRequest.getName())) {
+        if (!departmentService.isUnique(departmentRequest.getName(), departmentRequest.getId())) {
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
         if (bindingResult.hasErrors()) {
@@ -63,8 +63,8 @@ public class DepartmentController {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String updateDepartment(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult) {
-        if (!departmentService.isUnique(departmentRequest.getName())) {
+    public String update(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult) {
+        if (!departmentService.isUnique(departmentRequest.getName(), departmentRequest.getId())) {
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
         if (bindingResult.hasErrors()) {

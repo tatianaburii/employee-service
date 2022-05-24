@@ -30,8 +30,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public boolean isUnique(String email) {
-        return repository.findIdByEmail(email) < 0;
+    public boolean isUnique(String email, int id) {
+        return repository.findIdByEmail(email) < 0 || repository.findIdByEmail(email) == id;
     }
 
     @Override
@@ -42,5 +42,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void delete(int id) {
         repository.delete(id);
+    }
+
+    @Override
+    public void update(EmployeeRequest employeeRequest) {
+        repository.update(employeeRequest);
+    }
+
+    @Override
+    public Employee findById(int id) {
+        return repository.findById(id);
     }
 }
