@@ -33,7 +33,7 @@ public class EmployeeController {
 
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult, Model model) {
-        if (!employeeService.isUnique(employeeRequest.getEmail())) {
+        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())) {
             bindingResult.rejectValue("email", "email", "A employee already exists for this email.");
         }
         if (bindingResult.hasErrors()) {
@@ -54,6 +54,25 @@ public class EmployeeController {
     @GetMapping(value = {"/{id}/delete"})
     public String delete(@PathVariable("id") int id) {
         employeeService.delete(id);
+        return "redirect:/employees";
+    }
+    @GetMapping(value = "/{id}/update")
+    public String showUpdateForm(@PathVariable int id, Model model) {
+        Employee employee = employeeService.findById(id);
+        model.addAttribute("employee", employee);
+        model.addAttribute("departments", departmentService.findAll());
+        return "update-employee";
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult) {
+        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())){
+            bindingResult.rejectValue("email", "email", "A employee already exists for this email");
+        }
+        if (bindingResult.hasErrors()) {
+            return "update-employee";
+        }
+        employeeService.update(employeeRequest);
         return "redirect:/employees";
     }
 }

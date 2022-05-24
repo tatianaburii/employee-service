@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface DepartmentService {
     void save(DepartmentRequest departmentRequest);
-    boolean isUnique(String name);
+    boolean isUnique(String name, int id);
     List<Department> findAll();
-    public void delete(int id);
-    public void update(DepartmentRequest departmentRequest);
+    void delete(int id);
+    void update(DepartmentRequest departmentRequest);
     Department findById(int id);
 }

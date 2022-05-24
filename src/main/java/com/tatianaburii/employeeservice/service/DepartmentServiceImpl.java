@@ -27,8 +27,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public boolean isUnique(String name) {
-        return repository.findIdByName(name) < 0;
+    public boolean isUnique(String name, int id) {
+        return repository.findIdByName(name) < 0 || repository.findIdByName(name) == id;
     }
 
     @Override

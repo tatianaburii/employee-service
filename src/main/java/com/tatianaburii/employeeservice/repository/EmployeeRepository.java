@@ -1,5 +1,6 @@
 package com.tatianaburii.employeeservice.repository;
 
+import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
 
 import java.util.List;
@@ -12,4 +13,8 @@ public interface EmployeeRepository {
     List<Employee> findAll();
 
     void delete(int id);
+
+    void update(EmployeeRequest employeeRequest);
+
+    Employee findById(int id);
 }
