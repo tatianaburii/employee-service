@@ -23,6 +23,7 @@
         <th>Phone</th>
         <th>Email</th>
         <th>Created_At</th>
+        <th>Department_id</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
@@ -33,10 +34,16 @@
             <td>${employee.phone}</td>
             <td>${employee.email}</td>
             <td>${employee.createdAt}</td>
+            <td>${employee.departmentId}</td>
             <td><a href="employees/${employee.id}/update">Edit</a></td>
             <td><a href="employees/${employee.id}/delete">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
 <br/>
+<tr>
 <a href="/employees/add">Add New Employee</a>
+</tr>
+<tr>
+<a href="/departments">Departments</a>
+</tr>

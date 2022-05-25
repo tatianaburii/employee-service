@@ -17,4 +17,5 @@ public interface EmployeeService {
     void update(EmployeeRequest employeeRequest);
 
     Employee findById(int id);
+    List<Employee> findByDepartmentId(int departmentId);
 }
