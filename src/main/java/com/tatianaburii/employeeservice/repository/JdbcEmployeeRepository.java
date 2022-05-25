@@ -42,7 +42,7 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
     public int findIdByEmail(String email) {
         try {
             Statement statement = connect.createStatement();
-            String query = "SELECT ID FROM EMPLOYEE WHERE EMAIL = '" + email + "'";
+            String query = "SELECT ID FROM EMPLOYEE WHERE `IS_ACTIVE` = TRUE AND EMAIL = '" + email + "'";
             ResultSet resultSet = statement.executeQuery(query);
             if (resultSet.next()) {
                 return resultSet.getInt("ID");
@@ -59,7 +59,7 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
         ArrayList<Employee> employees = new ArrayList<>();
         try {
             Statement statement = connect.createStatement();
-            String query = "SELECT *  FROM EMPLOYEE_SERVICE.EMPLOYEE where `IS_ACTIVE` = TRUE";
+            String query = "SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE `IS_ACTIVE` = TRUE";
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 int id = resultSet.getInt("ID");
@@ -92,7 +92,7 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
     }
 
     @Override
-    public Employee findById(int id){
+    public Employee findById(int id) {
         try {
             Statement statement = connect.createStatement();
             String sql = "SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE ID = '" + id + "'";
@@ -129,5 +129,29 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<Employee> findByDepartmentId(int departmentId) {
+        ArrayList<Employee> employees = new ArrayList<>();
+        try {
+            Statement statement = connect.createStatement();
+            String query = "SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE DEPARTMENT_ID='" + departmentId + "'";
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("ID");
+                String name = resultSet.getString("EMPLOYEE_NAME");
+                String phone = resultSet.getString("PHONE");
+                String email = resultSet.getString("EMAIL");
+                LocalDateTime createdAt = LocalDateTime.parse(resultSet.getString("CREATED_AT"));
+                boolean active = resultSet.getBoolean("IS_ACTIVE");
+                int departmentID = resultSet.getInt("DEPARTMENT_ID");
+                employees.add(new Employee(id, name, phone, email, createdAt, active, departmentID));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
     }
 }

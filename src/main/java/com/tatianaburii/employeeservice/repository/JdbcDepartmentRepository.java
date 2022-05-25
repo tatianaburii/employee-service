@@ -40,7 +40,7 @@ public class JdbcDepartmentRepository implements DepartmentRepository {
     public int findIdByName(String name) {
         try {
             Statement statement = connect.createStatement();
-            String query = "SELECT ID FROM DEPARTMENT WHERE DEPARTMENT_NAME = '" + name + "'";
+            String query = "SELECT ID FROM DEPARTMENT WHERE `IS_ACTIVE` = TRUE AND DEPARTMENT_NAME = '" + name + "'";
             ResultSet resultSet = statement.executeQuery(query);
             if (resultSet.next()) {
                 return resultSet.getInt("ID");
@@ -57,7 +57,7 @@ public class JdbcDepartmentRepository implements DepartmentRepository {
         ArrayList<Department> departments = new ArrayList<>();
         try {
             Statement statement = connect.createStatement();
-            String query = "SELECT *  FROM EMPLOYEE_SERVICE.DEPARTMENT where `IS_ACTIVE` = TRUE";
+            String query = "SELECT * FROM EMPLOYEE_SERVICE.DEPARTMENT WHERE `IS_ACTIVE` = TRUE";
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 int id = resultSet.getInt("ID");

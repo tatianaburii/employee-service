@@ -23,6 +23,7 @@
         <th>Created_At</th>
         <th>Edit</th>
         <th>Delete</th>
+        <th>List Of Employee</th>
     </tr>
     <c:forEach var="department" items="${departments}">
         <tr>
@@ -31,6 +32,7 @@
             <td>${department.createdAt}</td>
             <td><a href="departments/${department.id}/update">Edit</a></td>
             <td><a href="departments/${department.id}/delete">Delete</a></td>
+            <td><a href="departments/${department.id}/employees">List Of Employees</a></td>
         </tr>
     </c:forEach>
 </table>

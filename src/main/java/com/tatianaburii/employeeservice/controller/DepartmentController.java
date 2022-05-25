@@ -2,7 +2,9 @@ package com.tatianaburii.employeeservice.controller;
 
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
+import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.service.DepartmentService;
+import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class DepartmentController {
     DepartmentService departmentService;
+    EmployeeService employeeService;
 
     @GetMapping(value = {"/add"})
     public String view(Model model) {
@@ -73,4 +76,11 @@ public class DepartmentController {
         departmentService.update(departmentRequest);
         return "redirect:/departments";
     }
+    @GetMapping(value = "/{id}/employees")
+    public String findEmployeeByDepartmentId(@PathVariable int id, Model model) {
+        List<Employee> employees = employeeService.findByDepartmentId(id);
+        model.addAttribute("employees", employees);
+        return "employees";
+    }
+
 }

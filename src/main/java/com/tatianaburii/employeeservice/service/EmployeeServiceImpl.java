@@ -53,4 +53,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee findById(int id) {
         return repository.findById(id);
     }
+
+    @Override
+    public List<Employee> findByDepartmentId(int departmentId) {
+        return repository.findByDepartmentId(departmentId);
+    }
 }
