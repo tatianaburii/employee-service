@@ -25,7 +25,7 @@ public class EmployeeController {
     DepartmentService departmentService;
 
     @GetMapping(value = {"/add"})
-    public String view(Model model) {
+    public String showAddForm(Model model) {
         model.addAttribute("employee", new EmployeeRequest());
         model.addAttribute("departments", departmentService.findAll());
         return "create-employee";

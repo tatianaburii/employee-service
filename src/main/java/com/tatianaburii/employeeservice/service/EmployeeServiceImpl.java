@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -24,8 +25,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         String name = employeeRequest.getName();
         String phone = employeeRequest.getPhone();
         String email = employeeRequest.getEmail();
+        LocalDate dareOfBirth = employeeRequest.getDateOfBirth();
         int departmentId = employeeRequest.getDepartmentId();
-        repository.save(new Employee(name, phone, email, departmentId));
+        repository.save(new Employee(name, phone, email, dareOfBirth, departmentId));
         log.info("Employee created {}", name);
     }
 
