@@ -23,7 +23,8 @@
         <th>Phone</th>
         <th>Email</th>
         <th>Created_At</th>
-        <th>Department_id</th>
+        <th>Date_Of_Birth</th>
+        <th>Department_Id</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
@@ -34,9 +35,10 @@
             <td>${employee.phone}</td>
             <td>${employee.email}</td>
             <td>${employee.createdAt}</td>
+            <td>${employee.dateOfBirth}</td>
             <td>${employee.departmentId}</td>
-            <td><a href="employees/${employee.id}/update">Edit</a></td>
-            <td><a href="employees/${employee.id}/delete">Delete</a></td>
+            <td><a href="/employees/${employee.id}/update">Edit</a></td>
+            <td><a href="/employees/${employee.id}/delete">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
