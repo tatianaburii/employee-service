@@ -33,7 +33,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public boolean isUnique(String email, int id) {
-        return repository.findIdByEmail(email) < 0 || repository.findIdByEmail(email) == id;
+        int idByEmail = repository.findIdByEmail(email);
+        return idByEmail < 0 || idByEmail == id;
     }
 
     @Override

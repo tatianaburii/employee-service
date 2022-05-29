@@ -54,6 +54,9 @@ public class DepartmentController {
 
     @GetMapping(value = {"/{id}/delete"})
     public String delete(@PathVariable("id") int id) {
+       if(departmentService.findById(id)==null){
+           return "not-found-department";
+       }
         departmentService.delete(id);
         return "redirect:/departments";
     }
@@ -61,6 +64,9 @@ public class DepartmentController {
     @GetMapping(value = "/{id}/update")
     public String showUpdateForm(@PathVariable int id, Model model) {
         Department department = departmentService.findById(id);
+        if (department == null){
+            return "not-found-department";
+        }
         model.addAttribute("department", department);
         return "update-department";
     }
@@ -79,6 +85,9 @@ public class DepartmentController {
     @GetMapping(value = "/{id}/employees")
     public String findEmployeeByDepartmentId(@PathVariable int id, Model model) {
         List<Employee> employees = employeeService.findByDepartmentId(id);
+        if (employees.isEmpty()){
+            return "not-found-department";
+        }
         model.addAttribute("employees", employees);
         return "employees";
     }

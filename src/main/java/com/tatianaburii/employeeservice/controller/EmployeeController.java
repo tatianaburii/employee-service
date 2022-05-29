@@ -53,12 +53,18 @@ public class EmployeeController {
     }
     @GetMapping(value = {"/{id}/delete"})
     public String delete(@PathVariable("id") int id) {
+        if (employeeService.findById(id)==null) {
+            return "not-found-employee";
+        }
         employeeService.delete(id);
         return "redirect:/employees";
     }
     @GetMapping(value = "/{id}/update")
     public String showUpdateForm(@PathVariable int id, Model model) {
         Employee employee = employeeService.findById(id);
+        if(employee == null){
+            return "not-found-employee";
+        }
         model.addAttribute("employee", employee);
         model.addAttribute("departments", departmentService.findAll());
         return "update-employee";
