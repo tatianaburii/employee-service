@@ -28,7 +28,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean isUnique(String name, int id) {
-        return repository.findIdByName(name) < 0 || repository.findIdByName(name) == id;
+        int idByName = repository.findIdByName(name);
+        return idByName < 0 || idByName == id;
     }
 
     @Override
@@ -44,7 +45,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void update(DepartmentRequest departmentRequest) {
         repository.update(departmentRequest);
-
     }
 
     @Override
