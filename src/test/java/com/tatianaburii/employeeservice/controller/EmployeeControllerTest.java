@@ -110,7 +110,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void showUpdateForm() throws Exception {
+    void showUpdateForm_whenValidInput_thenReturnsUpdateForm() throws Exception {
         int id = 1;
         when(employeeService.findById(id)).thenReturn(employees.get(0));
         this.mockMvc.perform(get("/employees/{id}/update", id)
@@ -118,6 +118,16 @@ class EmployeeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-employee"))
                 .andExpect(model().attribute("employee", instanceOf(Employee.class)));
+    }
+
+    @Test
+    void showUpdateForm_whenInvalidInput_thenReturnsNotFound() throws Exception {
+        int id = 1;
+        when(employeeService.findById(id)).thenReturn(null);
+        this.mockMvc.perform(get("/employees/{id}/update", id)
+                        .param("id", String.valueOf(id)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("not-found-employee"));
     }
 
     @Test
