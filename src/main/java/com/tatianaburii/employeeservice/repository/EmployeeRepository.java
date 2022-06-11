@@ -5,17 +5,6 @@ import com.tatianaburii.employeeservice.domain.Employee;
 
 import java.util.List;
 
-public interface EmployeeRepository {
-    void save(Employee employee);
-
-    int findIdByEmail(String email);
-
-    List<Employee> findAll();
-
-    void delete(int id);
-
-    void update(EmployeeRequest employeeRequest);
-
-    Employee findById(int id);
+public interface EmployeeRepository extends Repository<EmployeeRequest, Employee> {
     List<Employee> findByDepartmentId(int departmentId);
 }

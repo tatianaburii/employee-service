@@ -1,23 +1,21 @@
 package com.tatianaburii.employeeservice.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-public class Department {
-    private int id;
-    private String name;
-    private LocalDateTime createdAt;
-    private boolean active;
+@ToString(callSuper = true)
+public class Department extends AbstractEntity {
 
     public Department(String name) {
-        this.name = name;
-        this.createdAt = LocalDateTime.now();
-        this.active = true;
+        super(name);
+    }
+
+    public Department(int id, String name, LocalDateTime createdAt, boolean active) {
+        super(id, name, createdAt, active);
     }
 }
