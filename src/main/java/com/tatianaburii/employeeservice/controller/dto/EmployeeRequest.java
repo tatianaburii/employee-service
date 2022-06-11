@@ -1,6 +1,5 @@
 package com.tatianaburii.employeeservice.controller.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,12 +9,9 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeRequest {
-    int id;
-    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
-    String name;
+public class EmployeeRequest extends AbstractRequest {
+
     @Size(min = 9, max = 30, message = "Phone number must be between 9 and 30 characters")
     String phone;
     @Email
@@ -24,4 +20,12 @@ public class EmployeeRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate dateOfBirth;
     int departmentId;
+
+    public EmployeeRequest(int id, String name, String phone, String email, LocalDate dateOfBirth, int departmentId) {
+        super(id, name);
+        this.phone = phone;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.departmentId = departmentId;
+    }
 }

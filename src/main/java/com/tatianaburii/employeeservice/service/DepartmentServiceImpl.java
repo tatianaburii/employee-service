@@ -2,53 +2,25 @@ package com.tatianaburii.employeeservice.service;
 
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
+import com.tatianaburii.employeeservice.repository.AbstractRepository;
 import com.tatianaburii.employeeservice.repository.DepartmentRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static lombok.AccessLevel.PRIVATE;
-
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(level = PRIVATE, makeFinal = true)
 @Slf4j
-public class DepartmentServiceImpl implements DepartmentService {
+public class DepartmentServiceImpl extends AbstractService<DepartmentRequest, Department> implements DepartmentService {
     DepartmentRepository repository;
+
+    public DepartmentServiceImpl(AbstractRepository<DepartmentRequest, Department> abstractRepository, DepartmentRepository repository) {
+        super(abstractRepository);
+        this.repository = repository;
+    }
 
     @Override
     public void save(DepartmentRequest departmentRequest) {
         String name = departmentRequest.getName();
         repository.save(new Department(name));
         log.info("Department created {}", name);
-    }
-
-    @Override
-    public boolean isUnique(String name, int id) {
-        int idByName = repository.findIdByName(name);
-        return idByName < 0 || idByName == id;
-    }
-
-    @Override
-    public List<Department> findAll() {
-        return repository.findAll();
-    }
-
-    @Override
-    public void delete(int id) {
-        repository.delete(id);
-    }
-
-    @Override
-    public void update(DepartmentRequest departmentRequest) {
-        repository.update(departmentRequest);
-    }
-
-    @Override
-    public Department findById(int id) {
-        return repository.findById(id);
     }
 }
