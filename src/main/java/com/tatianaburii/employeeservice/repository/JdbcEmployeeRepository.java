@@ -54,7 +54,7 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
 
     @Override
     public Employee findById(int id) {
-        return jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE ID=?", new EmployeeMapper(), id)
+        return jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE IS_ACTIVE = true AND ID=?", new EmployeeMapper(), id)
                 .stream().findAny().orElse(null);
     }
 
