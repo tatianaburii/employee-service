@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -145,6 +144,7 @@ class DepartmentControllerTest {
     @Test
     void findById_whenValidInput_thenReturnListOfEmployees() throws Exception {
         int id = 1;
+        when(departmentService.findById(id)).thenReturn(departments.get(0));
         when(employeeService.findByDepartmentId(anyInt())).thenReturn(employees);
         mockMvc.perform(get("/departments/{id}/employees", id)
                         .param("id", String.valueOf(id)))
@@ -152,10 +152,11 @@ class DepartmentControllerTest {
                 .andExpect(model().attribute("employees", employees))
                 .andExpect(view().name("employees"));
     }
+
     @Test
     void findById_whenInvalidInput_thenReturnNotFound() throws Exception {
         int id = 2;
-        when(employeeService.findByDepartmentId(anyInt())).thenReturn(Collections.emptyList());
+        when(departmentService.findById(anyInt())).thenReturn(null);
         mockMvc.perform(get("/departments/{id}/employees", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())

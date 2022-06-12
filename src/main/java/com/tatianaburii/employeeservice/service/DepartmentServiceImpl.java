@@ -2,8 +2,8 @@ package com.tatianaburii.employeeservice.service;
 
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
-import com.tatianaburii.employeeservice.repository.AbstractRepository;
 import com.tatianaburii.employeeservice.repository.DepartmentRepository;
+import com.tatianaburii.employeeservice.repository.Repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class DepartmentServiceImpl extends AbstractService<DepartmentRequest, Department> implements DepartmentService {
     DepartmentRepository repository;
 
-    public DepartmentServiceImpl(AbstractRepository<DepartmentRequest, Department> abstractRepository, DepartmentRepository repository) {
+    public DepartmentServiceImpl(Repository<DepartmentRequest, Department> abstractRepository, DepartmentRepository repository) {
         super(abstractRepository);
         this.repository = repository;
     }

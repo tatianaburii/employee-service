@@ -20,10 +20,13 @@ public abstract class AbstractEntity {
         this.createdAt = LocalDateTime.now();
     }
 
-    public AbstractEntity(int id, String name, LocalDateTime createdAt, boolean active) {
+    protected AbstractEntity(int id, String name, LocalDateTime createdAt, boolean active) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
         this.active = active;
+    }
+
+    protected AbstractEntity() {
     }
 }

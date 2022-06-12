@@ -4,11 +4,12 @@ import com.tatianaburii.employeeservice.controller.dto.AbstractRequest;
 import com.tatianaburii.employeeservice.domain.AbstractEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Repository<R extends AbstractRequest, E extends AbstractEntity> {
     void save(E abstractEntity);
 
-    int findIdByParam(String name);
+    Optional<Integer> findIdByParam(String name);
 
     List<E> findAll();
 

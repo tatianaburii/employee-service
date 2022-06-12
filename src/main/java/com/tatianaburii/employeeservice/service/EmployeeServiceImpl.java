@@ -2,8 +2,8 @@ package com.tatianaburii.employeeservice.service;
 
 import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
-import com.tatianaburii.employeeservice.repository.AbstractRepository;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;
+import com.tatianaburii.employeeservice.repository.Repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,8 @@ import java.util.List;
 public class EmployeeServiceImpl extends AbstractService<EmployeeRequest, Employee> implements EmployeeService {
 
     EmployeeRepository repository;
-    public EmployeeServiceImpl(AbstractRepository<EmployeeRequest, Employee> abstractRepository, EmployeeRepository repository) {
+
+    public EmployeeServiceImpl(Repository<EmployeeRequest, Employee> abstractRepository, EmployeeRepository repository) {
         super(abstractRepository);
         this.repository = repository;
     }

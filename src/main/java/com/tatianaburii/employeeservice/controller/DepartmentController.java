@@ -5,26 +5,25 @@ import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
-import static lombok.AccessLevel.PRIVATE;
-
 @Controller
-@RequiredArgsConstructor
 @RequestMapping(value = {"/departments"})
-@FieldDefaults(level = PRIVATE, makeFinal = true)
+
 public class DepartmentController {
-    DepartmentService departmentService;
-    EmployeeService employeeService;
+    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
+
+    public DepartmentController(DepartmentService departmentService, EmployeeService employeeService) {
+        this.departmentService = departmentService;
+        this.employeeService = employeeService;
+    }
 
     @GetMapping(value = {"/add"})
     public String view(Model model) {
@@ -54,9 +53,9 @@ public class DepartmentController {
 
     @GetMapping(value = {"/{id}/delete"})
     public String delete(@PathVariable("id") int id) {
-       if(departmentService.findById(id)==null){
-           return "not-found-department";
-       }
+        if (departmentService.findById(id) == null) {
+            return "not-found-department";
+        }
         departmentService.delete(id);
         return "redirect:/departments";
     }
@@ -64,7 +63,7 @@ public class DepartmentController {
     @GetMapping(value = "/{id}/update")
     public String showUpdateForm(@PathVariable int id, Model model) {
         Department department = departmentService.findById(id);
-        if (department == null){
+        if (department == null) {
             return "not-found-department";
         }
         model.addAttribute("department", department);
@@ -82,12 +81,13 @@ public class DepartmentController {
         departmentService.update(departmentRequest);
         return "redirect:/departments";
     }
+
     @GetMapping(value = "/{id}/employees")
     public String findEmployeeByDepartmentId(@PathVariable int id, Model model) {
-        List<Employee> employees = employeeService.findByDepartmentId(id);
-        if (employees.isEmpty()){
+        if (departmentService.findById(id) == null) {
             return "not-found-department";
         }
+        List<Employee> employees = employeeService.findByDepartmentId(id);
         model.addAttribute("employees", employees);
         return "employees";
     }

@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -54,9 +55,9 @@ class DepartmentServiceTest {
     void isUnique_whenTheSameName_thanReturnsTrue() {
         String name = "Name";
         int id = 1;
-        when(departmentRepository.findIdByName(anyString())).thenReturn(id);
+        when(departmentRepository.findIdByParam(anyString())).thenReturn(Optional.of(1));
         boolean result = departmentService.isUnique(name, id);
-        verify(departmentRepository).findIdByName(stringArgumentCaptor.capture());
+        verify(departmentRepository).findIdByParam(stringArgumentCaptor.capture());
         String departmentName = stringArgumentCaptor.getValue();
         assertThat(departmentName).isEqualTo(name);
         assertThat(result).isEqualTo(true);
@@ -66,9 +67,9 @@ class DepartmentServiceTest {
     void isUnique_whenNameIsUnique_thanReturnsTrue() {
         String name = "Name";
         int id = 1;
-        when(departmentRepository.findIdByName(anyString())).thenReturn(-1);
+        when(departmentRepository.findIdByParam(anyString())).thenReturn(Optional.empty());
         boolean result = departmentService.isUnique(name, id);
-        verify(departmentRepository).findIdByName(stringArgumentCaptor.capture());
+        verify(departmentRepository).findIdByParam(stringArgumentCaptor.capture());
         String departmentName = stringArgumentCaptor.getValue();
         assertThat(departmentName).isEqualTo(name);
         assertThat(result).isEqualTo(true);
@@ -78,9 +79,9 @@ class DepartmentServiceTest {
     void isUnique_whenNameIsNotUnique_thanReturnsTrue() {
         String name = "Name";
         int id = 1;
-        when(departmentRepository.findIdByName(anyString())).thenReturn(9);
+        when(departmentRepository.findIdByParam(anyString())).thenReturn(Optional.of(9));
         boolean result = departmentService.isUnique(name, id);
-        verify(departmentRepository).findIdByName(stringArgumentCaptor.capture());
+        verify(departmentRepository).findIdByParam(stringArgumentCaptor.capture());
         String departmentName = stringArgumentCaptor.getValue();
         assertThat(departmentName).isEqualTo(name);
         assertThat(result).isEqualTo(false);
