@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -60,9 +61,9 @@ class EmployeeServiceTest {
 
     @Test
     void isUnique_whenTheSameEmail_thanReturnsTrue() {
-        when(employeeRepository.findIdByEmail(anyString())).thenReturn(id);
+        when(employeeRepository.findIdByParam(anyString())).thenReturn(Optional.of(id));
         boolean result = employeeService.isUnique(email, id);
-        verify(employeeRepository).findIdByEmail(stringArgumentCaptor.capture());
+        verify(employeeRepository).findIdByParam(stringArgumentCaptor.capture());
         String employeeEmail = stringArgumentCaptor.getValue();
         assertThat(employeeEmail).isEqualTo(email);
         assertThat(result).isEqualTo(true);
@@ -70,9 +71,9 @@ class EmployeeServiceTest {
 
     @Test
     void isUnique_whenEmailIsUnique_thanReturnsTrue() {
-        when(employeeRepository.findIdByEmail(anyString())).thenReturn(-1);
+        when(employeeRepository.findIdByParam(anyString())).thenReturn(Optional.empty());
         boolean result = employeeService.isUnique(email, id);
-        verify(employeeRepository).findIdByEmail(stringArgumentCaptor.capture());
+        verify(employeeRepository).findIdByParam(stringArgumentCaptor.capture());
         String employeeEmail = stringArgumentCaptor.getValue();
         assertThat(employeeEmail).isEqualTo(email);
         assertThat(result).isEqualTo(true);
@@ -80,9 +81,9 @@ class EmployeeServiceTest {
 
     @Test
     void isUnique_whenEmailIsNotUnique_thanReturnsTrue() {
-        when(employeeRepository.findIdByEmail(anyString())).thenReturn(9);
+        when(employeeRepository.findIdByParam(anyString())).thenReturn(Optional.of(9));
         boolean result = employeeService.isUnique(email, id);
-        verify(employeeRepository).findIdByEmail(stringArgumentCaptor.capture());
+        verify(employeeRepository).findIdByParam(stringArgumentCaptor.capture());
         String employeeEmail = stringArgumentCaptor.getValue();
         assertThat(employeeEmail).isEqualTo(email);
         assertThat(result).isEqualTo(false);

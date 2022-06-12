@@ -3,10 +3,9 @@ package com.tatianaburii.employeeservice.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javax.sql.DataSource;
 
 @Configuration
 public class DbConfiguration {
@@ -17,9 +16,13 @@ public class DbConfiguration {
     @Value("${db.pass}")
     private String pass;
 
-
     @Bean
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, user, pass);
+    public DataSource getDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setUrl(url);
+        dataSource.setUsername(user);
+        dataSource.setPassword(pass);
+        return dataSource;
     }
 }

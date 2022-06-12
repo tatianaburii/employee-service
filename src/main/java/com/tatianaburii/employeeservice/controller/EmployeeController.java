@@ -4,8 +4,6 @@ import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,15 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static lombok.AccessLevel.PRIVATE;
-
 @Controller
-@RequiredArgsConstructor
 @RequestMapping(value = {"/employees"})
-@FieldDefaults(level = PRIVATE, makeFinal = true)
 public class EmployeeController {
-    EmployeeService employeeService;
-    DepartmentService departmentService;
+    private final EmployeeService employeeService;
+    private final DepartmentService departmentService;
+
+    public EmployeeController(EmployeeService employeeService, DepartmentService departmentService) {
+        this.employeeService = employeeService;
+        this.departmentService = departmentService;
+    }
 
     @GetMapping(value = {"/add"})
     public String showAddForm(Model model) {
@@ -51,18 +50,20 @@ public class EmployeeController {
         model.addAttribute("employees", employees);
         return "employees";
     }
+
     @GetMapping(value = {"/{id}/delete"})
     public String delete(@PathVariable("id") int id) {
-        if (employeeService.findById(id)==null) {
+        if (employeeService.findById(id) == null) {
             return "not-found-employee";
         }
         employeeService.delete(id);
         return "redirect:/employees";
     }
+
     @GetMapping(value = "/{id}/update")
     public String showUpdateForm(@PathVariable int id, Model model) {
         Employee employee = employeeService.findById(id);
-        if(employee == null){
+        if (employee == null) {
             return "not-found-employee";
         }
         model.addAttribute("employee", employee);
@@ -72,7 +73,7 @@ public class EmployeeController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult) {
-        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())){
+        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())) {
             bindingResult.rejectValue("email", "email", "A employee already exists for this email");
         }
         if (bindingResult.hasErrors()) {

@@ -1,7 +1,6 @@
 package com.tatianaburii.employeeservice.controller.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
@@ -9,7 +8,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
 public class EmployeeRequest extends AbstractRequest {
 
     @Size(min = 9, max = 30, message = "Phone number must be between 9 and 30 characters")
@@ -27,5 +25,8 @@ public class EmployeeRequest extends AbstractRequest {
         this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.departmentId = departmentId;
+    }
+
+    public EmployeeRequest() {
     }
 }

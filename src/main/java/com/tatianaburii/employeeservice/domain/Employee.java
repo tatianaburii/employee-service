@@ -29,5 +29,16 @@ public class Employee extends AbstractEntity{
         this.departmentId = departmentId;
         this.dateOfBirth = dateOfBirth;
     }
+
+    public Employee(String name, String phone, String email, int departmentId, LocalDate dateOfBirth) {
+        super(name);
+        this.phone = phone;
+        this.email = email;
+        this.departmentId = departmentId;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Employee() {
+    }
 }
 

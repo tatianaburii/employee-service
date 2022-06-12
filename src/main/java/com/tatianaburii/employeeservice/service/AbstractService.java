@@ -2,11 +2,11 @@ package com.tatianaburii.employeeservice.service;
 
 import com.tatianaburii.employeeservice.controller.dto.AbstractRequest;
 import com.tatianaburii.employeeservice.domain.AbstractEntity;
-import com.tatianaburii.employeeservice.repository.AbstractRepository;
 import com.tatianaburii.employeeservice.repository.Repository;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public abstract class AbstractService<R extends AbstractRequest, E extends AbstractEntity> implements Service<R, E> {
@@ -17,8 +17,8 @@ public abstract class AbstractService<R extends AbstractRequest, E extends Abstr
 
     @Override
     public boolean isUnique(String param, int id) {
-        int idByParam = repository.findIdByParam(param);
-        return idByParam < 0 || idByParam == id;
+        Optional<Integer> idByParam = repository.findIdByParam(param);
+        return idByParam.isEmpty() || idByParam.equals(Optional.of(id));
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class AbstractService<R extends AbstractRequest, E extends Abstr
         return repository.findById(id);
     }
 
-    public AbstractService(AbstractRepository<R, E> abstractRepository) {
-        this.repository = abstractRepository;
+    protected AbstractService(Repository<R, E> repository) {
+        this.repository = repository;
     }
 }

@@ -15,6 +15,9 @@ public class Department extends AbstractEntity {
         super(name);
     }
 
+    public Department() {
+    }
+
     public Department(int id, String name, LocalDateTime createdAt, boolean active) {
         super(id, name, createdAt, active);
     }
