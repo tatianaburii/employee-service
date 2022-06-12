@@ -29,7 +29,7 @@ public class JdbcDepartmentRepository implements DepartmentRepository {
 
     @Override
     public Optional<Integer> findIdByParam(String name) {
-        List<Department> departments = jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.DEPARTMENT WHERE DEPARTMENT_NAME=?",
+        List<Department> departments = jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.DEPARTMENT WHERE IS_ACTIVE = true AND DEPARTMENT_NAME=?",
                 new DepartmentMapper(), name);
         return departments.isEmpty() ? Optional.empty() : Optional.of(departments.get(0).getId());
     }
