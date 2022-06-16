@@ -29,11 +29,13 @@ public abstract class AbstractService<R extends AbstractRequest, E extends Abstr
     @Override
     public void delete(int id) {
         repository.delete(id);
+        log.info("Entity with id {} is deleted ", id);
     }
 
     @Override
     public void update(R abstractRequest) {
         repository.update(abstractRequest);
+        log.info("Entity {} is updated ", abstractRequest);
     }
 
     @Override

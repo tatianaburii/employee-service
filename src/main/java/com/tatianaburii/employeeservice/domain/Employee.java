@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
 public class Employee extends AbstractEntity{
     private String phone;
     private String email;
@@ -39,6 +38,19 @@ public class Employee extends AbstractEntity{
     }
 
     public Employee() {
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                " id=" + id +
+                ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", departmentId=" + departmentId +
+                ", dateOfBirth=" + dateOfBirth +
+                '}';
     }
 }
 
