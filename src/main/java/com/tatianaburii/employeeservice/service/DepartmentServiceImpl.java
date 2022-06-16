@@ -30,6 +30,8 @@ public class DepartmentServiceImpl extends AbstractService<DepartmentRequest, De
     @Override
     public void delete(int id) {
         departmentRepository.delete(id);
+        log.info("Department with id {} is deleted", id );
         employeeRepository.findByDepartmentId(id).forEach(employee -> employeeRepository.delete(employee.getId()));
+        log.info("Employees with departmentId {} are deleted", id);
     }
 }

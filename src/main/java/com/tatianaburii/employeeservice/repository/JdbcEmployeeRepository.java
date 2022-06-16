@@ -36,7 +36,7 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
 
     @Override
     public Optional<Integer> findIdByParam(String email) {
-       List<Employee> employees = jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE EMAIL=?",
+       List<Employee> employees = jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.EMPLOYEE WHERE IS_ACTIVE = true AND EMAIL=?",
                                new EmployeeMapper(), email);
        return employees.isEmpty() ? Optional.empty() : Optional.of(employees.get(0).getId());
     }
