@@ -1,8 +1,9 @@
-package com.tatianaburii.employeeservice.repository;
+package com.tatianaburii.employeeservice.repository.impl;
 
 import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.mapper.EmployeeMapper;
+import com.tatianaburii.employeeservice.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

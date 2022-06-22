@@ -3,6 +3,7 @@ package com.tatianaburii.employeeservice.controller;
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
+import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping(value = {"/departments"})
 @Slf4j
 public class DepartmentController {
+    private static final String DEPARTMENT_NOT_FOUND = "Department with id = %s not found";
     private final DepartmentService departmentService;
     private final EmployeeService employeeService;
 
@@ -36,11 +38,11 @@ public class DepartmentController {
     public String create(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult, Model model) {
         log.info("Got departmentRequest {}", departmentRequest);
         if (!departmentService.isUnique(departmentRequest.getName(), departmentRequest.getId())) {
-            log.info("Name is not unique: {}", departmentRequest.getName());
+            log.warn("Name is not unique: {}", departmentRequest.getName());
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
         if (bindingResult.hasErrors()) {
-            log.info("There are validations problem, return form.");
+            log.warn("There are validations problem, return form.");
             return "create-department";
         }
         departmentService.save(departmentRequest);
@@ -58,8 +60,7 @@ public class DepartmentController {
     @GetMapping(value = {"/{id}/delete"})
     public String delete(@PathVariable("id") int id) {
         if (departmentService.findById(id) == null) {
-            log.info("Department with id {} is not found, return not-found page", id);
-            return "not-found-department";
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
         }
         departmentService.delete(id);
         return "redirect:/departments";
@@ -69,8 +70,7 @@ public class DepartmentController {
     public String showUpdateForm(@PathVariable int id, Model model) {
         Department department = departmentService.findById(id);
         if (department == null) {
-            log.info("Department with id {} is not found, return not-found page", id);
-            return "not-found-department";
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
         }
         model.addAttribute("department", department);
         return "update-department";
@@ -79,11 +79,11 @@ public class DepartmentController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult) {
         if (!departmentService.isUnique(departmentRequest.getName(), departmentRequest.getId())) {
-            log.info("Name is not unique: {}", departmentRequest.getName());
+            log.warn("Name is not unique: {}", departmentRequest.getName());
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
         if (bindingResult.hasErrors()) {
-            log.info("There are validations problem, return form.");
+            log.warn("There are validations problem, return form.");
             return "update-department";
         }
         departmentService.update(departmentRequest);
@@ -93,8 +93,7 @@ public class DepartmentController {
     @GetMapping(value = "/{id}/employees")
     public String findEmployeeByDepartmentId(@PathVariable int id, Model model) {
         if (departmentService.findById(id) == null) {
-            log.info("Department with id {} is not found, return not-found page", id);
-            return "not-found-department";
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
         }
         List<Employee> employees = employeeService.findByDepartmentId(id);
         model.addAttribute("employees", employees);

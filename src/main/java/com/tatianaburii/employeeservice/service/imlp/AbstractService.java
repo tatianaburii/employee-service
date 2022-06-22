@@ -1,16 +1,18 @@
-package com.tatianaburii.employeeservice.service;
+package com.tatianaburii.employeeservice.service.imlp;
 
 import com.tatianaburii.employeeservice.controller.dto.AbstractRequest;
 import com.tatianaburii.employeeservice.domain.AbstractEntity;
 import com.tatianaburii.employeeservice.repository.Repository;
+import com.tatianaburii.employeeservice.service.Service;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 public abstract class AbstractService<R extends AbstractRequest, E extends AbstractEntity> implements Service<R, E> {
-    Repository<R, E> repository;
+    protected Repository<R, E> repository;
 
     @Override
     public abstract void save(R abstractRequest);
@@ -32,6 +34,7 @@ public abstract class AbstractService<R extends AbstractRequest, E extends Abstr
         log.info("Entity with id {} is deleted ", id);
     }
 
+    @Transactional
     @Override
     public void update(R abstractRequest) {
         repository.update(abstractRequest);
