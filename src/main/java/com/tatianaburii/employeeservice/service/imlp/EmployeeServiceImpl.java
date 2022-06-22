@@ -1,11 +1,12 @@
-package com.tatianaburii.employeeservice.service;
+package com.tatianaburii.employeeservice.service.imlp;
 
 import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;
-import com.tatianaburii.employeeservice.repository.Repository;
+import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,13 +15,11 @@ import java.util.List;
 @Slf4j
 public class EmployeeServiceImpl extends AbstractService<EmployeeRequest, Employee> implements EmployeeService {
 
-    EmployeeRepository repository;
-
-    public EmployeeServiceImpl(Repository<EmployeeRequest, Employee> abstractRepository, EmployeeRepository repository) {
-        super(abstractRepository);
-        this.repository = repository;
+    public EmployeeServiceImpl(EmployeeRepository repository) {
+        super(repository);
     }
 
+    @Transactional
     @Override
     public void save(EmployeeRequest employeeRequest) {
         String name = employeeRequest.getName();
@@ -34,7 +33,7 @@ public class EmployeeServiceImpl extends AbstractService<EmployeeRequest, Employ
 
     @Override
     public List<Employee> findByDepartmentId(int departmentId) {
-        return repository.findByDepartmentId(departmentId);
+        return ((EmployeeRepository) repository).findByDepartmentId(departmentId);
     }
 
 }

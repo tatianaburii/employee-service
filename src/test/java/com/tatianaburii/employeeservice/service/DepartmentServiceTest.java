@@ -3,6 +3,7 @@ package com.tatianaburii.employeeservice.service;
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.repository.DepartmentRepository;
+import com.tatianaburii.employeeservice.service.imlp.DepartmentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

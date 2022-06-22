@@ -13,13 +13,13 @@ import java.time.LocalDate;
 public class EmployeeRequest extends AbstractRequest {
 
     @Size(min = 9, max = 30, message = "Phone number must be between 9 and 30 characters")
-    String phone;
+    private String phone;
     @Email
     @Size(min = 10, max = 30, message = "Email must be between 10 and 30 characters")
-    String email;
+    private String email;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate dateOfBirth;
-    int departmentId;
+    private LocalDate dateOfBirth;
+    private int departmentId;
 
     public EmployeeRequest(int id, String name, String phone, String email, LocalDate dateOfBirth, int departmentId) {
         super(id, name);

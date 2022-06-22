@@ -6,7 +6,7 @@
 </style>
 <body>
 <h1>
-    DEPARTMENT IS NOT FOUND!
+   Houston, we have a problem!
 </h1>
-<a href="/departments">Back to Departments</a>
+<a href="/departments">Main Page</a>
 </body>

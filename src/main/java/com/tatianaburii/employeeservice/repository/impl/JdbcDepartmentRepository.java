@@ -1,8 +1,9 @@
-package com.tatianaburii.employeeservice.repository;
+package com.tatianaburii.employeeservice.repository.impl;
 
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.mapper.DepartmentMapper;
+import com.tatianaburii.employeeservice.repository.DepartmentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -54,7 +55,7 @@ public class JdbcDepartmentRepository implements DepartmentRepository {
 
     @Override
     public Department findById(int id) {
-        return jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.DEPARTMENT WHERE ID=?", new DepartmentMapper(), id)
+        return jdbcTemplate.query("SELECT * FROM EMPLOYEE_SERVICE.DEPARTMENT WHERE IS_ACTIVE = true AND ID=?", new DepartmentMapper(), id)
                 .stream().findAny().orElse(null);
     }
 }

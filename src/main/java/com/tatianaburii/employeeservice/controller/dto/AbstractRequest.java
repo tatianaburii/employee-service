@@ -6,9 +6,9 @@ import javax.validation.constraints.Size;
 
 @Data
 public abstract class AbstractRequest {
-    int id;
+    protected int id;
     @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
-    String name;
+    protected String name;
 
     protected AbstractRequest() {
     }
