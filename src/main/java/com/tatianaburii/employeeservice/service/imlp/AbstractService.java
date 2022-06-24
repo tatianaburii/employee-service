@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Slf4j
 public abstract class AbstractService<R extends AbstractRequest, E extends AbstractEntity> implements Service<R, E> {
-    protected Repository<R, E> repository;
+    protected final Repository<R, E> repository;
 
     @Override
     public abstract void save(R abstractRequest);

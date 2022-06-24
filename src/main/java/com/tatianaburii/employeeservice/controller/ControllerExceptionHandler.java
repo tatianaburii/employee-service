@@ -25,7 +25,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(EmployeeNotFoundException.class)
-    public String employeeNotFound(DepartmentNotFoundException exception) {
+    public String employeeNotFound(EmployeeNotFoundException exception) {
         log.warn(exception.getMessage());
         return "not-found-employee";
     }

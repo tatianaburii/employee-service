@@ -107,7 +107,6 @@ class DepartmentControllerTest {
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("not-found-department"));
-
     }
 
     @Test
