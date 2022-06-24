@@ -65,6 +65,7 @@ class EmployeeControllerTest {
     @Test
     void create_whenValidInput_thenReturns300() throws Exception {
         when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
+        when(departmentService.findById(anyInt())).thenReturn(departments.get(0));
         mockMvc.perform(post("/employees/create")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
@@ -87,7 +88,6 @@ class EmployeeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("create-employee"));
     }
-
 
     @Test
     void delete_whenValidInput_thenReturns300() throws Exception {
@@ -133,6 +133,7 @@ class EmployeeControllerTest {
     @Test
     void save_whenValidInput_thenReturns300() throws Exception {
         when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
+        when(departmentService.findById(anyInt())).thenReturn(departments.get(0));
         mockMvc.perform(post("/employees/save")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
@@ -155,5 +156,19 @@ class EmployeeControllerTest {
                         .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-employee"));
+    }
+
+    @Test
+    public void save_whenDepartmentIsNull_thenReturnsAddForm() throws Exception {
+        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
+        when(departmentService.findById(anyInt())).thenReturn(null);
+        mockMvc.perform(post("/employees/save")
+                        .param("name", employeeRequest.getName())
+                        .param("phone", employeeRequest.getPhone())
+                        .param("email", employeeRequest.getEmail())
+                        .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("not-found-department"));
     }
 }

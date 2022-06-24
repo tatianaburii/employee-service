@@ -3,6 +3,7 @@ package com.tatianaburii.employeeservice.service;
 import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.repository.DepartmentRepository;
+import com.tatianaburii.employeeservice.repository.EmployeeRepository;
 import com.tatianaburii.employeeservice.service.imlp.DepartmentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.*;
 class DepartmentServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
     @InjectMocks
     DepartmentServiceImpl departmentService;
     @Captor
