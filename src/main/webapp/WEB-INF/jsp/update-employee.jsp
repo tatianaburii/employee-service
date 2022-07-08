@@ -51,7 +51,7 @@
             <td><form:input path="dateOfBirth" type="date" value="2000-01-01" min="1945-01-01" max="2021-12-31"/></td>
             <td><form:errors path="dateOfBirth" cssClass="error"/></td>
         </tr>
-        <td><form:label path="departmentId">Department</form:label></td>
+        <td><form:label path="department">Department</form:label></td>
         <td>
             <label>
                 <select name="departmentId">

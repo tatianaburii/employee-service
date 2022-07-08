@@ -1,46 +1,31 @@
 package com.tatianaburii.employeeservice.controller.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.tatianaburii.employeeservice.domain.Department;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class EmployeeRequest extends AbstractRequest {
-
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+public class EmployeeRequest {
+    int id;
+    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
+    String name;
     @Size(min = 9, max = 30, message = "Phone number must be between 9 and 30 characters")
-    private String phone;
+    String phone;
     @Email
     @Size(min = 10, max = 30, message = "Email must be between 10 and 30 characters")
-    private String email;
+    String email;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate dateOfBirth;
-    private int departmentId;
-
-    public EmployeeRequest(int id, String name, String phone, String email, LocalDate dateOfBirth, int departmentId) {
-        super(id, name);
-        this.phone = phone;
-        this.email = email;
-        this.dateOfBirth = dateOfBirth;
-        this.departmentId = departmentId;
-    }
-
-    public EmployeeRequest() {
-    }
-
-    @Override
-    public String toString() {
-        return "EmployeeRequest{" +
-                " id=" + id +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                ", departmentId=" + departmentId +
-                '}';
-    }
+    LocalDate dateOfBirth;
+    @NotNull
+    Department department;
 }
+

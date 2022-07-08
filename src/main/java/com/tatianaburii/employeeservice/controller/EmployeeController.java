@@ -6,6 +6,8 @@ import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
 import com.tatianaburii.employeeservice.exceptions.EmployeeNotFoundException;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,22 +15,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Controller
 @RequestMapping(value = {"/employees"})
 @Slf4j
+@RequiredArgsConstructor
+@FieldDefaults(level = PRIVATE, makeFinal = true)
 public class EmployeeController {
 
     private static final String EMPLOYEE_NOT_FOUND = "Employee with id = %s not found";
     private static final String DEPARTMENT_NOT_FOUND = "Department with id = %s not found";
-    private final EmployeeService employeeService;
-    private final DepartmentService departmentService;
-
-    public EmployeeController(EmployeeService employeeService, DepartmentService departmentService) {
-        this.employeeService = employeeService;
-        this.departmentService = departmentService;
-    }
+    EmployeeService employeeService;
+    DepartmentService departmentService;
 
     @GetMapping(value = {"/add"})
     public String showAddForm(Model model) {
@@ -49,8 +49,8 @@ public class EmployeeController {
             model.addAttribute("departments", departmentService.findAll());
             return "create-employee";
         }
-        if (departmentService.findById(employeeRequest.getDepartmentId()) == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeRequest.getDepartmentId()));
+        if (departmentService.findById(employeeRequest.getDepartment().getId()) == null) {
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeRequest.getDepartment()));
         }
         employeeService.save(employeeRequest);
         model.addAttribute("employee", new EmployeeRequest());
@@ -59,7 +59,7 @@ public class EmployeeController {
 
     @GetMapping
     public String findAll(Model model) {
-        List<Employee> employees = employeeService.findAll();
+        Iterable<Employee> employees = employeeService.findAll();
         model.addAttribute("employees", employees);
         return "employees";
     }
@@ -86,7 +86,7 @@ public class EmployeeController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult) {
-        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())) {
+        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())){
             log.warn("EmployeeRequest`e email is not unique {}", employeeRequest.getEmail());
             bindingResult.rejectValue("email", "email", "A employee already exists for this email");
         }
@@ -94,8 +94,8 @@ public class EmployeeController {
             log.warn("Validation problems, return form.");
             return "update-employee";
         }
-        if (departmentService.findById(employeeRequest.getDepartmentId()) == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeRequest.getDepartmentId()));
+        if (departmentService.findById(employeeRequest.getDepartment().getId()) == null) {
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeRequest.getDepartment()));
         }
         employeeService.update(employeeRequest);
         return "redirect:/employees";

@@ -3,8 +3,18 @@ package com.tatianaburii.employeeservice.service;
 import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
 import com.tatianaburii.employeeservice.domain.Employee;
 
-import java.util.List;
+public interface EmployeeService {
 
-public interface EmployeeService extends Service<EmployeeRequest, Employee> {
-    List<Employee> findByDepartmentId(int departmentId);
+    Iterable<Employee> findAll();
+
+    Employee findById(int id);
+
+    Employee save(EmployeeRequest employeeRequest);
+
+    void delete(int id);
+
+    boolean isUnique(String email, int id);
+
+    void update(EmployeeRequest employeeRequest);
+
 }
