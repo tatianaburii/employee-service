@@ -1,17 +1,14 @@
 package com.tatianaburii.employeeservice.controller.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@Getter
-@Setter
-@ToString(callSuper = true)
-public class DepartmentRequest extends AbstractRequest {
-    public DepartmentRequest(int id, String name) {
-        super(id, name);
-    }
+import javax.validation.constraints.Size;
 
-    public DepartmentRequest() {
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DepartmentRequest {
+    int id;
+    @Size(min=3, max=255, message = "Name must be between 3 and 255 characters")
+    String name;
 }

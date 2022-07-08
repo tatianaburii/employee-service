@@ -38,3 +38,4 @@
 </table>
 <br/>
 <a href="/departments/add">Add New Department</a>
+<a href="/employees">Employees</a>

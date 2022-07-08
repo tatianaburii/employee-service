@@ -5,7 +5,8 @@ import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
 import com.tatianaburii.employeeservice.service.DepartmentService;
-import com.tatianaburii.employeeservice.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,20 +14,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Controller
 @RequestMapping(value = {"/departments"})
 @Slf4j
+@RequiredArgsConstructor
+@FieldDefaults(level = PRIVATE, makeFinal = true)
 public class DepartmentController {
     private static final String DEPARTMENT_NOT_FOUND = "Department with id = %s not found";
-    private final DepartmentService departmentService;
-    private final EmployeeService employeeService;
+    DepartmentService departmentService;
 
-    public DepartmentController(DepartmentService departmentService, EmployeeService employeeService) {
-        this.departmentService = departmentService;
-        this.employeeService = employeeService;
-    }
 
     @GetMapping(value = {"/add"})
     public String view(Model model) {
@@ -52,7 +51,7 @@ public class DepartmentController {
 
     @GetMapping
     public String findAll(Model model) {
-        List<Department> departments = departmentService.findAll();
+        Iterable<Department> departments = departmentService.findAll();
         model.addAttribute("departments", departments);
         return "departments";
     }
@@ -95,7 +94,7 @@ public class DepartmentController {
         if (departmentService.findById(id) == null) {
             throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
         }
-        List<Employee> employees = employeeService.findByDepartmentId(id);
+        Iterable<Employee> employees = departmentService.findById(id).getEmployees();
         model.addAttribute("employees", employees);
         return "employees";
     }
