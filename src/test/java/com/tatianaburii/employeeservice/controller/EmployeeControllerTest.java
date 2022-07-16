@@ -18,7 +18,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -35,12 +37,12 @@ class EmployeeControllerTest {
     protected MockMvc mockMvc;
 
     List<Department> departments = List.of(new Department("DepartmentName"));
-    List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), 1));
+    List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), departments.get(0)));
     EmployeeRequest employeeRequest;
 
     @BeforeEach
     public void init() {
-        employeeRequest = new EmployeeRequest(1, "Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), 1);
+        employeeRequest = new EmployeeRequest(1, "Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), departments.get(0));
     }
 
     @Test
@@ -63,7 +65,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void create_whenValidInput_thenReturns300() throws Exception {
+    void create_whenValidInput_thenReturns302() throws Exception {
         when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
         when(departmentService.findById(anyInt())).thenReturn(departments.get(0));
         mockMvc.perform(post("/employees/create")
@@ -71,7 +73,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
+                        .param("department", String.valueOf(employeeRequest.getDepartment())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/employees"));
     }
@@ -84,13 +86,27 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
+                        .param("department", String.valueOf(employeeRequest.getDepartment())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("create-employee"));
     }
 
     @Test
-    void delete_whenValidInput_thenReturns300() throws Exception {
+    public void create_whenDepartmentIsNull_thenReturnsDepartmentNotFound() throws Exception {
+        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
+        when(departmentService.findById(anyInt())).thenReturn(null);
+        mockMvc.perform(post("/employees/create")
+                        .param("name", employeeRequest.getName())
+                        .param("phone", employeeRequest.getPhone())
+                        .param("email", employeeRequest.getEmail())
+                        .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
+                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                  .andExpect(status().isOk())
+                .andExpect(view().name("not-found-department"));
+    }
+
+    @Test
+    void delete_whenValidInput_thenReturns302() throws Exception {
         int id = 1;
         when(employeeService.findById(anyInt())).thenReturn(employees.get(0));
         mockMvc.perform(get("/employees/{id}/delete", id)
@@ -139,7 +155,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
+                        .param("department", String.valueOf(employeeRequest.getDepartment())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/employees"))
                 .andReturn();
@@ -153,13 +169,13 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
+                        .param("department", String.valueOf(employeeRequest.getDepartment())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-employee"));
     }
 
     @Test
-    public void save_whenDepartmentIsNull_thenReturnsAddForm() throws Exception {
+    public void save_whenDepartmentIsNull_thenReturnsDepartmentNotFound() throws Exception {
         when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
         when(departmentService.findById(anyInt())).thenReturn(null);
         mockMvc.perform(post("/employees/save")
@@ -167,7 +183,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
+                        .param("department", String.valueOf(employeeRequest.getDepartment())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("not-found-department"));
     }

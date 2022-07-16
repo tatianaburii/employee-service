@@ -9,23 +9,22 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class EmployeeRequest {
-    int id;
+    private int id;
     @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
-    String name;
+    private String name;
     @Size(min = 9, max = 30, message = "Phone number must be between 9 and 30 characters")
-    String phone;
+    private String phone;
     @Email
     @Size(min = 10, max = 30, message = "Email must be between 10 and 30 characters")
-    String email;
+    private String email;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate dateOfBirth;
+    private LocalDate dateOfBirth;
     @NotNull
-    Department department;
+    private Department department;
 }
 
