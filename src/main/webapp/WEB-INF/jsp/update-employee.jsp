@@ -54,7 +54,7 @@
         <td><form:label path="department">Department</form:label></td>
         <td>
             <label>
-                <select name="departmentId">
+                <select name="department">
                     <c:forEach items="${departments}" var="department">
                         <option value="${department.id}">${department.name}</option>
                     </c:forEach>

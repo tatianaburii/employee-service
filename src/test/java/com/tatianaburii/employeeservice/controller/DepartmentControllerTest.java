@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -33,8 +34,9 @@ class DepartmentControllerTest {
     DepartmentService departmentService;
     @MockBean
     EmployeeService employeeService;
-    List<Department> departments = List.of(new Department("DepartmentName"));
-    List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), 1));
+    List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), new Department("DepartmentName")));
+    List<Department> departments = List.of(new Department(1,"DepartmentName", LocalDateTime.now(), employees));
+
     DepartmentRequest departmentRequest;
 
     @BeforeEach
@@ -143,8 +145,7 @@ class DepartmentControllerTest {
     @Test
     void findById_whenValidInput_thenReturnListOfEmployees() throws Exception {
         int id = 1;
-        when(departmentService.findById(id)).thenReturn(departments.get(0));
-        when(employeeService.findByDepartmentId(anyInt())).thenReturn(employees);
+        when(departmentService.findById(anyInt())).thenReturn(departments.get(0));
         mockMvc.perform(get("/departments/{id}/employees", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
