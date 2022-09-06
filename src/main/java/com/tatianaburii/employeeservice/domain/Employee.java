@@ -1,10 +1,14 @@
 package com.tatianaburii.employeeservice.domain;
 
+import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Getter
@@ -14,24 +18,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "employees")
 @Builder
+@FieldDefaults(level = PRIVATE)
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    int id;
     @Column(name = "employee_name")
-    private String name;
+    String name;
     @Column(name = "phone")
-    private String phone;
+    String phone;
     @Column(name = "email")
-    private String email;
+    String email;
     @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
+    LocalDate dateOfBirth;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
     @ManyToOne
     @JoinColumn(name = "department_id")
-    private Department department;
+    Department department;
 
     public Employee(String name, String phone, String email, LocalDate dateOfBirth, Department department) {
         this.name = name;
@@ -40,6 +45,17 @@ public class Employee {
         this.createdAt = LocalDateTime.now();
         this.dateOfBirth = dateOfBirth;
         this.department = department;
+    }
+
+    public EmployeeDto toDto() {
+        return EmployeeDto.builder()
+                .id(id)
+                .name(name)
+                .phone(phone)
+                .email(email)
+                .dateOfBirth(dateOfBirth)
+                .departmentId(department.getId())
+                .build();
     }
 }
 

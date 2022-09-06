@@ -1,8 +1,9 @@
 package com.tatianaburii.employeeservice.service.imlp;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
+import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
+import com.tatianaburii.employeeservice.exceptions.EmployeeNotFoundException;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;
 import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
     EmployeeRepository repository;
+    private static final String EMPLOYEE_NOT_FOUND = "Employee with id = %s not found";
 
     @Override
     public Iterable<Employee> findAll() {
@@ -29,18 +31,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee findById(int id) {
-        return repository.findById(id).get();
+        return repository.findById(id)
+                .orElseThrow(()-> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND + id));
     }
 
     @Override
     @Transactional
-    public Employee save(EmployeeRequest employeeRequest) {
-        String name = employeeRequest.getName();
-        String phone = employeeRequest.getPhone();
-        String email = employeeRequest.getEmail();
-        LocalDate dareOfBirth = employeeRequest.getDateOfBirth();
-        Department department = employeeRequest.getDepartment();
+    public Employee save(EmployeeDto employeeDto, Department department) {
+        String name = employeeDto.getName();
+        String phone = employeeDto.getPhone();
+        String email = employeeDto.getEmail();
+        LocalDate dareOfBirth = employeeDto.getDateOfBirth();
         Employee employee = new Employee(name, phone, email, dareOfBirth, department);
+        log.info("Employee {} is created");
         return repository.save(employee);
     }
 
@@ -48,6 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void delete(int id) {
         Employee employee = findById(id);
         repository.delete(employee);
+        log.info("Employee {} is deleted");
     }
 
     @Override
@@ -58,13 +62,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public void update(EmployeeRequest employeeRequest) {
-        Employee e = repository.findById(employeeRequest.getId()).get();
-        e.setName(employeeRequest.getName());
-        e.setPhone(employeeRequest.getPhone());
-        e.setEmail(employeeRequest.getEmail());
-        e.setDateOfBirth(employeeRequest.getDateOfBirth());
-        e.setDepartment(employeeRequest.getDepartment());
+    public void update(EmployeeDto employeeDto, Department department) {
+        Employee e = repository.findById(employeeDto.getId())
+                .orElseThrow(()-> new EmployeeNotFoundException(String.format(EMPLOYEE_NOT_FOUND, employeeDto.getId())));
+        e.setName(employeeDto.getName());
+        e.setPhone(employeeDto.getPhone());
+        e.setEmail(employeeDto.getEmail());
+        e.setDateOfBirth(employeeDto.getDateOfBirth());
+        e.setDepartment(department);
         repository.save(e);
+        log.info("Employee {} is updated");
     }
 }

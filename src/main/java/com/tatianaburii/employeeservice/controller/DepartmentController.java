@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.controller;
 
-import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
+import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
@@ -14,6 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -29,23 +31,23 @@ public class DepartmentController {
 
     @GetMapping(value = {"/add"})
     public String view(Model model) {
-        model.addAttribute("department", new DepartmentRequest());
+        model.addAttribute("department", new DepartmentDto());
         return "create-department";
     }
 
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult, Model model) {
-        log.info("Got departmentRequest {}", departmentRequest);
-        if (!departmentService.isUnique(departmentRequest.getName(), departmentRequest.getId())) {
-            log.warn("Name is not unique: {}", departmentRequest.getName());
+    public String create(@Valid @ModelAttribute("department") DepartmentDto departmentDto, BindingResult bindingResult, Model model) {
+        log.info("Got departmentRequest {}", departmentDto);
+        if (!departmentService.isUnique(departmentDto.getName(), departmentDto.getId())) {
+            log.warn("Name is not unique: {}", departmentDto.getName());
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
         if (bindingResult.hasErrors()) {
             log.warn("There are validations problem, return form.");
             return "create-department";
         }
-        departmentService.save(departmentRequest);
-        model.addAttribute("department", new DepartmentRequest());
+        departmentService.save(departmentDto);
+        model.addAttribute("department", new DepartmentDto());
         return "redirect:/departments";
     }
 
@@ -67,25 +69,25 @@ public class DepartmentController {
 
     @GetMapping(value = "/{id}/update")
     public String showUpdateForm(@PathVariable int id, Model model) {
-        Department department = departmentService.findById(id);
-        if (department == null) {
+        DepartmentDto departmentDto = departmentService.findById(id).toDto();
+        if (departmentDto == null) {
             throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
         }
-        model.addAttribute("department", department);
+        model.addAttribute("department", departmentDto);
         return "update-department";
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("department") DepartmentRequest departmentRequest, BindingResult bindingResult) {
-        if (!departmentService.isUnique(departmentRequest.getName(), departmentRequest.getId())) {
-            log.warn("Name is not unique: {}", departmentRequest.getName());
+    public String update(@Valid @ModelAttribute("department") DepartmentDto departmentDto, BindingResult bindingResult) {
+        if (!departmentService.isUnique(departmentDto.getName(), departmentDto.getId())) {
+            log.warn("Name is not unique: {}", departmentDto.getName());
             bindingResult.rejectValue("name", "name", "A department already exists for this name.");
         }
         if (bindingResult.hasErrors()) {
             log.warn("There are validations problem, return form.");
             return "update-department";
         }
-        departmentService.update(departmentRequest);
+        departmentService.update(departmentDto);
         return "redirect:/departments";
     }
 
@@ -98,5 +100,4 @@ public class DepartmentController {
         model.addAttribute("employees", employees);
         return "employees";
     }
-
 }

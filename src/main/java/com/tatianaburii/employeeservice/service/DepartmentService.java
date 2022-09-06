@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.service;
 
-import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
+import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 
 public interface DepartmentService {
@@ -8,11 +8,11 @@ public interface DepartmentService {
 
     Department findById(int id);
 
-    Department save(DepartmentRequest departmentRequest);
+    Department save(DepartmentDto departmentDto);
 
     void delete(int id);
 
     boolean isUnique(String name, int id);
 
-    void update(DepartmentRequest departmentRequest);
+    void update(DepartmentDto departmentDto);
 }
