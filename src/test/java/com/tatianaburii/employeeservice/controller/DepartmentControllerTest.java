@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.controller;
 
-import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
+import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.service.DepartmentService;
@@ -37,11 +37,11 @@ class DepartmentControllerTest {
     List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), new Department("DepartmentName")));
     List<Department> departments = List.of(new Department(1,"DepartmentName", LocalDateTime.now(), employees));
 
-    DepartmentRequest departmentRequest;
+    DepartmentDto departmentRequest;
 
     @BeforeEach
     public void init() {
-        departmentRequest = new DepartmentRequest(1, "Name");
+        departmentRequest = new DepartmentDto(1, "Name");
     }
 
     @Test
@@ -49,7 +49,7 @@ class DepartmentControllerTest {
         this.mockMvc.perform(get("/departments/add"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("create-department"))
-                .andExpect(model().attribute("department", instanceOf(DepartmentRequest.class)));
+                .andExpect(model().attribute("department", instanceOf(DepartmentDto.class)));
     }
 
     @Test
@@ -98,7 +98,7 @@ class DepartmentControllerTest {
         mockMvc.perform(get("/departments/{id}/delete", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("not-found-department"));
+                .andExpect(view().name("not-found-error"));
     }
 
     @Test
@@ -108,7 +108,7 @@ class DepartmentControllerTest {
         this.mockMvc.perform(get("/departments/{id}/update", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("not-found-department"));
+                .andExpect(view().name("error"));
     }
 
     @Test
@@ -118,7 +118,7 @@ class DepartmentControllerTest {
         this.mockMvc.perform(get("/departments/{id}/update", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("department", instanceOf(Department.class)))
+                .andExpect(model().attribute("department", instanceOf(DepartmentDto.class)))
                 .andExpect(view().name("update-department"));
     }
 
@@ -160,6 +160,6 @@ class DepartmentControllerTest {
         mockMvc.perform(get("/departments/{id}/employees", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("not-found-department"));
+                .andExpect(view().name("not-found-error"));
     }
 }

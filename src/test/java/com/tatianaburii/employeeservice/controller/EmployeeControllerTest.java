@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.controller;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
+import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.service.DepartmentService;
@@ -38,11 +38,11 @@ class EmployeeControllerTest {
 
     List<Department> departments = List.of(new Department("DepartmentName"));
     List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), departments.get(0)));
-    EmployeeRequest employeeRequest;
+    EmployeeDto employeeRequest;
 
     @BeforeEach
     public void init() {
-        employeeRequest = new EmployeeRequest(1, "Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), departments.get(0));
+        employeeRequest = new EmployeeDto(1, "Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), 1);
     }
 
     @Test
@@ -51,7 +51,7 @@ class EmployeeControllerTest {
         this.mockMvc.perform(get("/employees/add"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("create-employee"))
-                .andExpect(model().attribute("employee", instanceOf(EmployeeRequest.class)))
+                .andExpect(model().attribute("employee", instanceOf(EmployeeDto.class)))
                 .andExpect(model().attribute("departments", equalTo(departments)));
     }
 
@@ -73,7 +73,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/employees"));
     }
@@ -86,7 +86,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("create-employee"));
     }
@@ -100,9 +100,9 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                   .andExpect(status().isOk())
-                .andExpect(view().name("not-found-department"));
+                .andExpect(view().name("not-found-error"));
     }
 
     @Test
@@ -122,7 +122,7 @@ class EmployeeControllerTest {
         mockMvc.perform(get("/employees/{id}/delete", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("not-found-employee"));
+                .andExpect(view().name("not-found-error"));
     }
 
     @Test
@@ -133,7 +133,7 @@ class EmployeeControllerTest {
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-employee"))
-                .andExpect(model().attribute("employee", instanceOf(Employee.class)));
+                .andExpect(model().attribute("employee", instanceOf(EmployeeDto.class)));
     }
 
     @Test
@@ -143,7 +143,7 @@ class EmployeeControllerTest {
         this.mockMvc.perform(get("/employees/{id}/update", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("not-found-employee"));
+                .andExpect(view().name("error"));
     }
 
     @Test
@@ -155,7 +155,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/employees"))
                 .andReturn();
@@ -169,7 +169,7 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-employee"));
     }
@@ -183,8 +183,8 @@ class EmployeeControllerTest {
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
-                        .param("department", String.valueOf(employeeRequest.getDepartment())))
+                        .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().isOk())
-                .andExpect(view().name("not-found-department"));
+                .andExpect(view().name("not-found-error"));
     }
 }

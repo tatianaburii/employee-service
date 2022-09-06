@@ -1,37 +1,48 @@
 package com.tatianaburii.employeeservice.domain;
 
+import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Slf4j
 @Table(name = "departments")
 @Builder
+@FieldDefaults(level = PRIVATE)
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    int id;
     @Column(name = "department_name")
-    private String name;
+    String name;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "department", fetch = FetchType.LAZY)
     @OrderBy("id asc")
-    private List<Employee> employees;
+    List<Employee> employees;
 
     public Department(String name) {
         this.name = name;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public DepartmentDto toDto() {
+        return DepartmentDto.builder()
+                .id(id)
+                .name(name)
+                .build();
     }
 
     @Override

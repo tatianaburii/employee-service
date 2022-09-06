@@ -1,6 +1,7 @@
 package com.tatianaburii.employeeservice.service;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
+import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
+import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 
 public interface EmployeeService {
@@ -9,12 +10,12 @@ public interface EmployeeService {
 
     Employee findById(int id);
 
-    Employee save(EmployeeRequest employeeRequest);
+    Employee save(EmployeeDto employeeDto, Department department);
 
     void delete(int id);
 
     boolean isUnique(String email, int id);
 
-    void update(EmployeeRequest employeeRequest);
+    void update(EmployeeDto employeeDto, Department department);
 
 }

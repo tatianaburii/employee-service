@@ -21,18 +21,18 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(DepartmentNotFoundException.class)
     public String departmentNotFound(DepartmentNotFoundException exception) {
         log.warn(exception.getMessage());
-        return "not-found-department";
+        return "not-found-error";
     }
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     public String employeeNotFound(EmployeeNotFoundException exception) {
         log.warn(exception.getMessage());
-        return "not-found-employee";
+        return "not-found-error";
     }
 
     @ExceptionHandler(Exception.class)
     public String handleGeneralError(Exception ex) {
         log.error(ex.getMessage(), ex);
-        return "general_error";
+        return "error";
     }
 }

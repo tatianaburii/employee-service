@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.service;
 
-import com.tatianaburii.employeeservice.controller.dto.DepartmentRequest;
+import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.DepartmentFixture;
 import com.tatianaburii.employeeservice.domain.DepartmentRequestFixture;
@@ -36,7 +36,7 @@ class DepartmentServiceTest {
     ArgumentCaptor<Integer> integerArgumentCaptor;
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
-    DepartmentRequest departmentRequest;
+    DepartmentDto departmentRequest;
     Department department;
     List<Department> departments;
     String name;

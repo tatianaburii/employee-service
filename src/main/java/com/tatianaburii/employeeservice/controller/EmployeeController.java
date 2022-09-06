@@ -1,6 +1,7 @@
 package com.tatianaburii.employeeservice.controller;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
+import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
+import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
 import com.tatianaburii.employeeservice.exceptions.EmployeeNotFoundException;
@@ -32,16 +33,16 @@ public class EmployeeController {
 
     @GetMapping(value = {"/add"})
     public String showAddForm(Model model) {
-        model.addAttribute("employee", new EmployeeRequest());
+        model.addAttribute("employee", new EmployeeDto());
         model.addAttribute("departments", departmentService.findAll());
         return "create-employee";
     }
 
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult, Model model) {
-        log.info("Got EmployeeRequest {}", employeeRequest);
-        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())) {
-            log.warn("EmployeeRequest`e email is not unique {}", employeeRequest.getEmail());
+    public String create(@Valid @ModelAttribute("employee") EmployeeDto employeeDto, BindingResult bindingResult, Model model) {
+        log.info("Got EmployeeRequest {}", employeeDto);
+        if (!employeeService.isUnique(employeeDto.getEmail(), employeeDto.getId())) {
+            log.warn("EmployeeRequest`e email is not unique {}", employeeDto.getEmail());
             bindingResult.rejectValue("email", "email", "A employee already exists for this email.");
         }
         if (bindingResult.hasErrors()) {
@@ -49,11 +50,12 @@ public class EmployeeController {
             model.addAttribute("departments", departmentService.findAll());
             return "create-employee";
         }
-        if (departmentService.findById(employeeRequest.getDepartment().getId()) == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeRequest.getDepartment()));
+        Department department = departmentService.findById(employeeDto.getDepartmentId());
+        if (department == null) {
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeDto.getDepartmentId()));
         }
-        employeeService.save(employeeRequest);
-        model.addAttribute("employee", new EmployeeRequest());
+        model.addAttribute("departments", departmentService.findAll());
+        employeeService.save(employeeDto, department);
         return "redirect:/employees";
     }
 
@@ -61,6 +63,7 @@ public class EmployeeController {
     public String findAll(Model model) {
         Iterable<Employee> employees = employeeService.findAll();
         model.addAttribute("employees", employees);
+        model.addAttribute("departments", departmentService.findAll());
         return "employees";
     }
 
@@ -75,29 +78,30 @@ public class EmployeeController {
 
     @GetMapping(value = "/{id}/update")
     public String showUpdateForm(@PathVariable int id, Model model) {
-        Employee employee = employeeService.findById(id);
-        if (employee == null) {
+        EmployeeDto employeeDto = employeeService.findById(id).toDto();
+        if (employeeDto == null) {
             throw new EmployeeNotFoundException(String.format(EMPLOYEE_NOT_FOUND, id));
         }
-        model.addAttribute("employee", employee);
+        model.addAttribute("employee", employeeDto);
         model.addAttribute("departments", departmentService.findAll());
         return "update-employee";
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("employee") EmployeeRequest employeeRequest, BindingResult bindingResult) {
-        if (!employeeService.isUnique(employeeRequest.getEmail(), employeeRequest.getId())){
-            log.warn("EmployeeRequest`e email is not unique {}", employeeRequest.getEmail());
+    public String update(@Valid @ModelAttribute("employee") EmployeeDto employeeDto, BindingResult bindingResult) {
+        if (!employeeService.isUnique(employeeDto.getEmail(), employeeDto.getId())){
+            log.warn("EmployeeRequest`e email is not unique {}", employeeDto.getEmail());
             bindingResult.rejectValue("email", "email", "A employee already exists for this email");
         }
         if (bindingResult.hasErrors()) {
             log.warn("Validation problems, return form.");
             return "update-employee";
         }
-        if (departmentService.findById(employeeRequest.getDepartment().getId()) == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeRequest.getDepartment()));
+        Department department = departmentService.findById(employeeDto.getDepartmentId());
+        if (department == null) {
+            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, employeeDto.getDepartmentId()));
         }
-        employeeService.update(employeeRequest);
+        employeeService.update(employeeDto, department);
         return "redirect:/employees";
     }
 }

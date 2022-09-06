@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.service;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeRequest;
+import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.*;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;
 import com.tatianaburii.employeeservice.service.imlp.EmployeeServiceImpl;
@@ -34,7 +34,7 @@ class EmployeeServiceTest {
     ArgumentCaptor<String> stringArgumentCaptor;
     @Captor
     ArgumentCaptor<Integer> integerArgumentCaptor;
-    EmployeeRequest employeeRequest;
+    EmployeeDto employeeRequest;
     List<Employee> employees;
     Employee employee;
     String email;
@@ -52,14 +52,14 @@ class EmployeeServiceTest {
 
     @Test
     void save() {
-        employeeService.save(employeeRequest);
+        employeeService.save(employeeRequest, department);
         verify(employeeRepository).save(employeeArgumentCaptor.capture());
         Employee employee = employeeArgumentCaptor.getValue();
         assertThat(employee.getName()).isEqualTo(employeeRequest.getName());
         assertThat(employee.getEmail()).isEqualTo(employeeRequest.getEmail());
         assertThat(employee.getPhone()).isEqualTo(employeeRequest.getPhone());
         assertThat(employee.getDateOfBirth()).isEqualTo(employeeRequest.getDateOfBirth());
-        assertThat(employee.getDepartment()).isEqualTo(employeeRequest.getDepartment());
+        assertThat(employee.getDepartment()).isEqualTo(department);
     }
 
     @Test
@@ -116,7 +116,7 @@ class EmployeeServiceTest {
     @Test
     void update() {
         when(employeeRepository.findById(anyInt())).thenReturn(Optional.of(employee));
-        employeeService.update(employeeRequest);
+        employeeService.update(employeeRequest, department);
         verify(employeeRepository).save(employeeArgumentCaptor.capture());
         Employee employee = employeeArgumentCaptor.getValue();
         assertThat(employeeRequest.getId()).isEqualTo(employee.getId());
@@ -124,7 +124,7 @@ class EmployeeServiceTest {
         assertThat(employeeRequest.getEmail()).isEqualTo(employee.getEmail());
         assertThat(employeeRequest.getPhone()).isEqualTo(employee.getPhone());
         assertThat(employeeRequest.getDateOfBirth()).isEqualTo(employee.getDateOfBirth());
-        assertThat(employeeRequest.getDepartment()).isEqualTo(employee.getDepartment());
+        assertThat(department).isEqualTo(employee.getDepartment());
     }
 
     @Test
