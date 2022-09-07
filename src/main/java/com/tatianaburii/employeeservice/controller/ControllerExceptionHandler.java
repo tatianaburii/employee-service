@@ -32,7 +32,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public String handleGeneralError(Exception ex) {
-        log.error(ex.getMessage(), ex);
+        log.info(ex.getMessage(), ex);
         return "error";
     }
 }
