@@ -4,18 +4,14 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Hello from build stage'
-                echo 'Hello from build stage 2'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Hello from deploy stage'
+                sh 'make' 
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
             }
         }
         stage('Test') {
             steps {
-                echo 'Hello from test stage'
+                sh 'make check || true' 
+                junit '**/target/*.xml' 
             }
         }
         stage('Release') {
