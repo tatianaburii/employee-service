@@ -1,26 +1,25 @@
 pipeline {
     agent any
 
+    tools {
+        maven "3.8.6"
+    }
+
     stages {
-      stage('Build') {
+        stage('Build') {
             steps {
-                sh 'javac EmployeeServiceApplication.java'
+             
+                git 'https://github.com/tatianaburii/employee-service.git'
+
+            
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
             }
-        }
-        stage('Run') {
-            steps {
-                sh 'java EmployeeServiceApplication'
-            }
-        }
-//         stage('Test'){
-//             steps {
-   
-//                 junit 'reports/**/*.xml' 
-//             }
-//         }
-        stage('Release') {
-            steps {
-                echo 'Hello from release stage'
+
+            post {
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
+                }
             }
         }
     }
