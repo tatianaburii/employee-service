@@ -1,22 +1,27 @@
 pipeline {
     agent any
-    tools {
-        maven "3.8.6"
-        jdk "java 11"
-    }
-    stages {
 
-          stage('Build') {
-                  steps {
-                      sh 'make'
-                      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-                  }
-          }
-          stage('Test') {
-                      steps {
-                          sh 'make check || true'
-                          junit '**/target/*.xml'
-                      }
-          }
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Hello from build stage'
+                echo 'Hello from build stage 2'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Hello from deploy stage'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Hello from test stage'
+            }
+        }
+        stage('Release') {
+            steps {
+                echo 'Hello from release stage'
+            }
+        }
     }
 }
