@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Entity
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "departments")
@@ -22,13 +23,14 @@ import static lombok.AccessLevel.PRIVATE;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column
     int id;
-    @Column(name = "department_name")
+    @Column
     String name;
-    @Column(name = "created_at")
+    @Column
     LocalDateTime createdAt;
 
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "department", fetch = FetchType.LAZY)
     @OrderBy("id asc")
     List<Employee> employees;
@@ -43,13 +45,5 @@ public class Department {
                 .id(id)
                 .name(name)
                 .build();
-    }
-
-    @Override
-    public String toString() {
-        return "Department{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

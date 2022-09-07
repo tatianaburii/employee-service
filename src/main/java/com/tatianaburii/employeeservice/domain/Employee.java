@@ -22,17 +22,17 @@ import static lombok.AccessLevel.PRIVATE;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column
     int id;
-    @Column(name = "employee_name")
+    @Column
     String name;
-    @Column(name = "phone")
+    @Column
     String phone;
-    @Column(name = "email")
+    @Column
     String email;
-    @Column(name = "date_of_birth")
+    @Column
     LocalDate dateOfBirth;
-    @Column(name = "created_at")
+    @Column
     LocalDateTime createdAt;
     @ManyToOne
     @JoinColumn(name = "department_id")
