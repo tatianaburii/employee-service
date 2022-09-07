@@ -2,16 +2,15 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            steps {
+        stage('Build') { 
+            steps { 
                 sh 'make' 
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
             }
         }
-        stage('Test') {
+        stage('Test'){
             steps {
-                sh 'make check || true' 
-                junit '**/target/*.xml' 
+                sh 'make check'
+                junit 'reports/**/*.xml' 
             }
         }
         stage('Release') {
