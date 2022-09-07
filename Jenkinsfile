@@ -7,27 +7,28 @@ pipeline {
     }
 
     stages {
-        stage('Initialize'){
-            steps{
-                echo "PATH = ${M2_HOME}/bin:${PATH}"
-                echo "M2_HOME = /opt/maven"
-            }
-        }
-        stage('Build') {
-            steps {
-                dir("/var/lib/jenkins/workspace/New_demo/my-app/") {
-                sh 'mvn -B -DskipTests clean package'
-                }
+        stages {
+              stage('Build') {
+                  steps {
+                      sh 'make'
+                      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                  }
+              }
+          }
+          stage('Test') {
+                      steps {
+                          sh 'make check || true'
+                          junit '**/target/*.xml'
+                      }
+                  }
 
+        post {
+            always {
+                junit(
+                    allowEmptyResults: true,
+                    testResults: '*/test-reports/.xml'
+                )
             }
         }
-     }
-    post {
-       always {
-          junit(
-        allowEmptyResults: true,
-        testResults: '*/test-reports/.xml'
-      )
-      }
-   }
+    }
 }
