@@ -2,67 +2,60 @@ package com.tatianaburii.employeeservice.service.imlp;
 
 import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
-import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
 import com.tatianaburii.employeeservice.repository.DepartmentRepository;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class DepartmentServiceImpl implements DepartmentService {
-    DepartmentRepository departmentRepository;
-    private static final String DEPARTMENT_NOT_FOUND = "Department with id = %s not found";
+  DepartmentRepository repository;
 
+  @Override
+  public List<Department> findAll() {
+    return repository.findByActiveTrue();
+  }
 
-    @Override
-    public Iterable<Department> findAll() {
-        return departmentRepository.findAll();
-    }
+  @Override
+  public Optional<Department> findById(Long id) {
+    return repository.findByIdAndActiveTrue(id);
+  }
 
-    @Override
-    public Department findById(int id) {
-        return departmentRepository.findById(id)
-                .orElseThrow(() -> new DepartmentNotFoundException(DEPARTMENT_NOT_FOUND + id));
-    }
+  @Override
+  @Transactional
+  public Department create(DepartmentDto departmentDto) {
+    return save(Department.create(departmentDto));
+  }
 
-    @Override
-    @Transactional
-    public Department save(DepartmentDto departmentDto) {
-        Department department = new Department(departmentDto.getName());
-        log.info("Department {} is created");
-        return departmentRepository.save(department);
-    }
+  private Department save(Department department) {
+    return repository.save(department);
+  }
 
-    @Override
-    @Transactional
-    public void delete(int id) {
-        Department department = findById(id);
-        departmentRepository.delete(department);
-        log.info("Department {} is deleted");
-    }
+  @Override
+  @Transactional
+  public void delete(Department department) {
+    department.delete();
+    save(department);
+  }
 
-    @Override
-    public boolean isUnique(String name, int id) {
-        Department department = departmentRepository.findOneByName(name);
-        return department == null || department.getId() == id;
-    }
+  @Override
+  public boolean isUnique(String name) {
+    return repository.existsByNameAndActiveTrue(name);
+  }
 
-    @Override
-    @Transactional
-    public void update(DepartmentDto departmentDto) {
-        Department d = departmentRepository.findById(departmentDto.getId())
-                .orElseThrow(() -> new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, departmentDto.getId())));
-        d.setName(departmentDto.getName());
-        departmentRepository.save(d);
-        log.info("Department {} is updated");
-    }
+  @Override
+  @Transactional
+  public void update(Department department, DepartmentDto departmentDto) {
+    department.update(departmentDto);
+    save(department);
+  }
 }

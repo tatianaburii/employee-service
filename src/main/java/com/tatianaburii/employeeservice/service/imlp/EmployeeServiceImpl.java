@@ -3,74 +3,59 @@ package com.tatianaburii.employeeservice.service.imlp;
 import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
-import com.tatianaburii.employeeservice.exceptions.EmployeeNotFoundException;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;
 import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
-@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
-    EmployeeRepository repository;
-    private static final String EMPLOYEE_NOT_FOUND = "Employee with id = %s not found";
+  EmployeeRepository repository;
 
-    @Override
-    public Iterable<Employee> findAll() {
-        return repository.findAll();
-    }
+  @Override
+  public List<Employee> findAll() {
+    return repository.findByActiveTrueAndDepartmentActiveTrue();
+  }
 
-    @Override
-    public Employee findById(int id) {
-        return repository.findById(id)
-                .orElseThrow(()-> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND + id));
-    }
+  @Override
+  public Optional<Employee> findById(Long id) {
+    return repository.findByIdAndActiveTrue(id);
+  }
 
-    @Override
-    @Transactional
-    public Employee save(EmployeeDto employeeDto, Department department) {
-        String name = employeeDto.getName();
-        String phone = employeeDto.getPhone();
-        String email = employeeDto.getEmail();
-        LocalDate dareOfBirth = employeeDto.getDateOfBirth();
-        Employee employee = new Employee(name, phone, email, dareOfBirth, department);
-        log.info("Employee {} is created");
-        return repository.save(employee);
-    }
+  @Override
+  @Transactional
+  public Employee create(EmployeeDto dto, Department department) {
+    return save(Employee.create(dto, department));
+  }
 
-    @Override
-    public void delete(int id) {
-        Employee employee = findById(id);
-        repository.delete(employee);
-        log.info("Employee {} is deleted");
-    }
+  private Employee save(Employee employee) {
+    return repository.save(employee);
+  }
 
-    @Override
-    public boolean isUnique(String email, int id) {
-        Employee employee = repository.findOneByEmail(email);
-        return employee == null || employee.getId() == id;
-    }
+  @Override
+  public void delete(Employee employee) {
+    employee.delete();
+    save(employee);
+  }
 
-    @Override
-    @Transactional
-    public void update(EmployeeDto employeeDto, Department department) {
-        Employee e = repository.findById(employeeDto.getId())
-                .orElseThrow(()-> new EmployeeNotFoundException(String.format(EMPLOYEE_NOT_FOUND, employeeDto.getId())));
-        e.setName(employeeDto.getName());
-        e.setPhone(employeeDto.getPhone());
-        e.setEmail(employeeDto.getEmail());
-        e.setDateOfBirth(employeeDto.getDateOfBirth());
-        e.setDepartment(department);
-        repository.save(e);
-        log.info("Employee {} is updated");
-    }
+  @Override
+  public boolean isUnique(String email) {
+    return repository.existsByEmailAndActiveTrue(email);
+  }
+
+  @Override
+  @Transactional
+  public void update(Employee employee, EmployeeDto employeeDto, Department department) {
+    employee.update(employeeDto, department);
+    repository.save(employee);
+  }
 }

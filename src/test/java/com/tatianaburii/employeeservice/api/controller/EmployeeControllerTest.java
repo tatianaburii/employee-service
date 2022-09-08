@@ -1,8 +1,11 @@
-package com.tatianaburii.employeeservice.controller;
+package com.tatianaburii.employeeservice.api.controller;
 
+import com.tatianaburii.employeeservice.api.dto.EmployeeRequestFixture;
+import com.tatianaburii.employeeservice.api.dto.EmployeeResponseFixture;
+import com.tatianaburii.employeeservice.controller.EmployeeController;
 import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
-import com.tatianaburii.employeeservice.domain.Department;
-import com.tatianaburii.employeeservice.domain.Employee;
+import com.tatianaburii.employeeservice.controller.dto.EmployeeResponse;
+import com.tatianaburii.employeeservice.domain.*;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,12 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,13 +39,17 @@ class EmployeeControllerTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    List<Department> departments = List.of(new Department("DepartmentName"));
-    List<Employee> employees = List.of(new Employee("Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), departments.get(0)));
+    List<Department> departments = List.of(DepartmentFixture.createDepartment());
+    List<Employee> employees = List.of(EmployeeFixture.createEmployee());
+    Employee employee;
     EmployeeDto employeeRequest;
+    EmployeeResponse response;
 
     @BeforeEach
     public void init() {
-        employeeRequest = new EmployeeDto(1, "Name", "0998877665", "employee1@gmail.com", LocalDate.of(2000, 1, 1), 1);
+        employee = EmployeeFixture.createEmployee();
+        response = EmployeeResponseFixture.createEmployeeResponse();
+        employeeRequest = EmployeeRequestFixture.createEmployeeRequest();
     }
 
     @Test
@@ -59,28 +66,30 @@ class EmployeeControllerTest {
     public void findAll() throws Exception {
         when(employeeService.findAll()).thenReturn(employees);
         this.mockMvc.perform(get("/employees"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("employees", equalTo(employees)))
-                .andExpect(view().name("employees"));
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("employees", equalTo(employees)))
+            .andExpect(view().name("employees"));
     }
 
     @Test
     void create_whenValidInput_thenReturns302() throws Exception {
-        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
-        when(departmentService.findById(anyInt())).thenReturn(departments.get(0));
+        when(employeeService.isUnique(anyString())).thenReturn(false);
+        when(departmentService.findById(anyLong())).thenReturn(Optional.ofNullable(DepartmentFixture.createDepartment()));
         mockMvc.perform(post("/employees/create")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
                         .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/employees"));
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/employees"))
+            .andReturn();
     }
 
     @Test
     public void create_whenInvalidInput_thenReturnsAddForm() throws Exception {
-        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(false);
+        when(employeeService.isUnique(anyString())).thenReturn(true);
+        when(departmentService.findById(anyLong())).thenReturn(Optional.ofNullable(DepartmentFixture.createDepartment()));
         mockMvc.perform(post("/employees/create")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
@@ -93,8 +102,8 @@ class EmployeeControllerTest {
 
     @Test
     public void create_whenDepartmentIsNull_thenReturnsDepartmentNotFound() throws Exception {
-        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
-        when(departmentService.findById(anyInt())).thenReturn(null);
+        when(employeeService.isUnique(anyString())).thenReturn(false);
+        when(departmentService.findById(anyLong())).thenReturn(Optional.empty());
         mockMvc.perform(post("/employees/create")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
@@ -108,7 +117,7 @@ class EmployeeControllerTest {
     @Test
     void delete_whenValidInput_thenReturns302() throws Exception {
         int id = 1;
-        when(employeeService.findById(anyInt())).thenReturn(employees.get(0));
+        when(employeeService.findById(anyLong())).thenReturn(Optional.ofNullable(employee));
         mockMvc.perform(get("/employees/{id}/delete", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().is3xxRedirection())
@@ -118,7 +127,7 @@ class EmployeeControllerTest {
     @Test
     void delete_whenInvalidInput_thenReturnsNotFound() throws Exception {
         int id = 1;
-        when(employeeService.findById(anyInt())).thenReturn(null);
+        when(employeeService.findById(anyLong())).thenReturn(Optional.empty());
         mockMvc.perform(get("/employees/{id}/delete", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
@@ -127,8 +136,9 @@ class EmployeeControllerTest {
 
     @Test
     void showUpdateForm_whenValidInput_thenReturnsUpdateForm() throws Exception {
-        int id = 1;
-        when(employeeService.findById(id)).thenReturn(employees.get(0));
+        Long id = 1L;
+        when(employeeService.findById(id)).thenReturn(Optional.ofNullable(employee));
+        when(departmentService.findById(id)).thenReturn(Optional.ofNullable(DepartmentFixture.createDepartment()));
         this.mockMvc.perform(get("/employees/{id}/update", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
@@ -138,32 +148,31 @@ class EmployeeControllerTest {
 
     @Test
     void showUpdateForm_whenInvalidInput_thenReturnsNotFound() throws Exception {
-        int id = 1;
-        when(employeeService.findById(id)).thenReturn(null);
+        Long id = 1L;
+        when(employeeService.findById(id)).thenReturn(Optional.empty());
         this.mockMvc.perform(get("/employees/{id}/update", id)
                         .param("id", String.valueOf(id)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("error"));
+                .andExpect(view().name("not-found-error"));
     }
 
     @Test
-    void save_whenValidInput_thenReturns300() throws Exception {
-        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
-        when(departmentService.findById(anyInt())).thenReturn(departments.get(0));
+    void save_whenValidInput_thenReturns200() throws Exception {
+        when(employeeService.isUnique(anyString())).thenReturn(false);
+        when(departmentService.findById(anyLong())).thenReturn(Optional.ofNullable(DepartmentFixture.createDepartment()));
         mockMvc.perform(post("/employees/save")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
                         .param("email", employeeRequest.getEmail())
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
                         .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/employees"))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
     }
 
     @Test
-    public void save_whenInvalidInput_thenReturnsAddForm() throws Exception {
-        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(false);
+    public void save_whenInvalidInput_thenReturnsNotFound() throws Exception {
+        when(employeeService.isUnique(anyString())).thenReturn(false);
         mockMvc.perform(post("/employees/save")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())
@@ -171,13 +180,13 @@ class EmployeeControllerTest {
                         .param("dateOfBirth", String.valueOf(employeeRequest.getDateOfBirth()))
                         .param("departmentId", String.valueOf(employeeRequest.getDepartmentId())))
                 .andExpect(status().isOk())
-                .andExpect(view().name("update-employee"));
+                .andExpect(view().name("not-found-error"));
     }
 
     @Test
     public void save_whenDepartmentIsNull_thenReturnsDepartmentNotFound() throws Exception {
-        when(employeeService.isUnique(anyString(), anyInt())).thenReturn(true);
-        when(departmentService.findById(anyInt())).thenReturn(null);
+        when(employeeService.isUnique(anyString())).thenReturn(true);
+        when(departmentService.findById(anyLong())).thenReturn(null);
         mockMvc.perform(post("/employees/save")
                         .param("name", employeeRequest.getName())
                         .param("phone", employeeRequest.getPhone())

@@ -3,6 +3,7 @@ package com.tatianaburii.employeeservice.domain;
 import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,43 +21,61 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @FieldDefaults(level = PRIVATE)
 public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    int id;
-    @Column
-    String name;
-    @Column
-    String phone;
-    @Column
-    String email;
-    @Column
-    LocalDate dateOfBirth;
-    @Column
-    LocalDateTime createdAt;
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    Department department;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column
+  Long id;
+  @Column
+  String name;
+  @Column
+  String phone;
+  @Column
+  String email;
+  @Column
+  LocalDate dateOfBirth;
+  @Column
+  @CreationTimestamp
+  LocalDateTime createdAt;
+  @ManyToOne
+  @JoinColumn(name = "department_id")
+  Department department;
 
-    public Employee(String name, String phone, String email, LocalDate dateOfBirth, Department department) {
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.createdAt = LocalDateTime.now();
-        this.dateOfBirth = dateOfBirth;
-        this.department = department;
-    }
+  @Column
+  @Builder.Default
+  Boolean active = true;
 
-    public EmployeeDto toDto() {
-        return EmployeeDto.builder()
-                .id(id)
-                .name(name)
-                .phone(phone)
-                .email(email)
-                .dateOfBirth(dateOfBirth)
-                .departmentId(department.getId())
-                .build();
-    }
+  public static Employee create(EmployeeDto dto, Department department) {
+    return Employee.builder()
+        .name(dto.getName())
+        .phone(dto.getPhone())
+        .email(dto.getEmail())
+        .dateOfBirth(dto.getDateOfBirth())
+        .department(department)
+        .build();
+  }
+
+  public void update(EmployeeDto dto, Department d) {
+    name = dto.getName();
+    phone = dto.getPhone();
+    email = dto.getEmail();
+    dateOfBirth = dto.getDateOfBirth();
+    department = d;
+  }
+
+  public EmployeeDto toDto() {
+    return EmployeeDto.builder()
+        .id(id)
+        .name(name)
+        .phone(phone)
+        .email(email)
+        .dateOfBirth(dateOfBirth)
+        .departmentId(department.getId())
+        .build();
+  }
+
+  public void delete() {
+    active = false;
+  }
 }
 
 

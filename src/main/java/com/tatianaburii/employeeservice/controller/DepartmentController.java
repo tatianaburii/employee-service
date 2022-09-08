@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -25,79 +25,85 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class DepartmentController {
-    private static final String DEPARTMENT_NOT_FOUND = "Department with id = %s not found";
-    DepartmentService departmentService;
+  private static final String DEPARTMENT_NOT_FOUND = "Department with id = %s not found";
+  DepartmentService departmentService;
 
+  @GetMapping(value = {"/add"})
+  public String showAddForm(Model model) {
+    model.addAttribute("department", new DepartmentDto());
+    return "create-department";
+  }
 
-    @GetMapping(value = {"/add"})
-    public String view(Model model) {
-        model.addAttribute("department", new DepartmentDto());
-        return "create-department";
+  @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
+  public String create(@Valid @ModelAttribute("department")
+                       DepartmentDto departmentDto,
+                       BindingResult bindingResult, Model model) {
+    log.info("Got departmentRequest {}", departmentDto);
+    if (departmentService.isUnique(departmentDto.getName())) {
+      log.warn("Name is not unique: {}", departmentDto.getName());
+      bindingResult.rejectValue("name", "name", "A department already exists for this name.");
     }
-
-    @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("department") DepartmentDto departmentDto, BindingResult bindingResult, Model model) {
-        log.info("Got departmentRequest {}", departmentDto);
-        if (!departmentService.isUnique(departmentDto.getName(), departmentDto.getId())) {
-            log.warn("Name is not unique: {}", departmentDto.getName());
-            bindingResult.rejectValue("name", "name", "A department already exists for this name.");
-        }
-        if (bindingResult.hasErrors()) {
-            log.warn("There are validations problem, return form.");
-            return "create-department";
-        }
-        departmentService.save(departmentDto);
-        model.addAttribute("department", new DepartmentDto());
-        return "redirect:/departments";
+    if (bindingResult.hasErrors()) {
+      log.warn("There are validations problem, return form.");
+      return "create-department";
     }
+    departmentService.create(departmentDto);
+    model.addAttribute("department", new DepartmentDto());
+    return "redirect:/departments";
+  }
 
-    @GetMapping
-    public String findAll(Model model) {
-        Iterable<Department> departments = departmentService.findAll();
-        model.addAttribute("departments", departments);
-        return "departments";
-    }
+  @GetMapping
+  public String findAll(Model model) {
+    Iterable<Department> departments = departmentService.findAll();
+    model.addAttribute("departments", departments);
+    return "departments";
+  }
 
-    @GetMapping(value = {"/{id}/delete"})
-    public String delete(@PathVariable("id") int id) {
-        if (departmentService.findById(id) == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
-        }
-        departmentService.delete(id);
-        return "redirect:/departments";
-    }
+  @GetMapping(value = {"/{id}/delete"})
+  public String delete(
+      @PathVariable("id") Long id) {
+    Department department = departmentService.findById(id)
+        .orElseThrow(() -> new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id)));
+    departmentService.delete(department);
+    return "redirect:/departments";
+  }
 
-    @GetMapping(value = "/{id}/update")
-    public String showUpdateForm(@PathVariable int id, Model model) {
-        DepartmentDto departmentDto = departmentService.findById(id).toDto();
-        if (departmentDto == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
-        }
-        model.addAttribute("department", departmentDto);
-        return "update-department";
-    }
+  @GetMapping(value = "/{id}/update")
+  public String showUpdateForm(
+      @PathVariable Long id, Model model) {
+    Department department = departmentService.findById(id)
+        .orElseThrow(() -> new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id)));
+    DepartmentDto departmentDto = department.toDto();
+    model.addAttribute("department", departmentDto);
+    return "update-department";
+  }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("department") DepartmentDto departmentDto, BindingResult bindingResult) {
-        if (!departmentService.isUnique(departmentDto.getName(), departmentDto.getId())) {
-            log.warn("Name is not unique: {}", departmentDto.getName());
-            bindingResult.rejectValue("name", "name", "A department already exists for this name.");
-        }
-        if (bindingResult.hasErrors()) {
-            log.warn("There are validations problem, return form.");
-            return "update-department";
-        }
-        departmentService.update(departmentDto);
-        return "redirect:/departments";
+  @RequestMapping(value = "/save", method = RequestMethod.POST)
+  public String update(@Valid
+                       @ModelAttribute("department")
+                       DepartmentDto dto, BindingResult bindingResult) {
+    Department department = departmentService.findById(dto.getId())
+        .orElseThrow(() -> new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, dto.getId())));
+    if (departmentService.isUnique(dto.getName())) {
+      log.warn("Name is not unique: {}", dto.getName());
+      bindingResult.rejectValue("name", "name", "A department already exists for this name.");
     }
+    if (bindingResult.hasErrors()) {
+      log.warn("There are validations problem, return form.");
+      return "update-department";
+    }
+    departmentService.update(department, dto);
+    return "redirect:/departments";
+  }
 
-    @GetMapping(value = "/{id}/employees")
-    public String findEmployeeByDepartmentId(@PathVariable int id, Model model) {
-        if (departmentService.findById(id) == null) {
-            throw new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id));
-        }
-        Iterable<Employee> employees = departmentService.findById(id).getEmployees();
-        model.addAttribute("employees", employees);
-        return "employees";
-    }
+  @GetMapping(value = "/{id}/employees")
+  public String findEmployeeByDepartmentId(
+      @PathVariable Long id, Model model) {
+    Department department = departmentService.findById(id)
+        .orElseThrow(() -> new DepartmentNotFoundException(String.format(DEPARTMENT_NOT_FOUND, id)));
+    Iterable<Employee> employees = department.getEmployees().stream()
+        .filter(Employee::getActive).collect(Collectors.toList());
+    model.addAttribute("employees", employees);
+    return "employees";
+  }
 }

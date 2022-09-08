@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @FieldDefaults(level = PRIVATE)
 public class DepartmentDto {
-    int id;
+    Long id;
     @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
     String name;
 }

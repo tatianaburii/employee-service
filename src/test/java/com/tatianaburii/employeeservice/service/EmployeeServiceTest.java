@@ -1,5 +1,6 @@
 package com.tatianaburii.employeeservice.service;
 
+import com.tatianaburii.employeeservice.api.dto.EmployeeRequestFixture;
 import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.*;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;
@@ -15,8 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -25,114 +24,71 @@ import static org.mockito.Mockito.*;
 class EmployeeServiceTest {
 
     @Mock
-    private EmployeeRepository employeeRepository;
+    EmployeeRepository employeeRepository;
     @InjectMocks
     EmployeeServiceImpl employeeService;
     @Captor
     ArgumentCaptor<Employee> employeeArgumentCaptor;
     @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
-    @Captor
-    ArgumentCaptor<Integer> integerArgumentCaptor;
-    EmployeeDto employeeRequest;
+    ArgumentCaptor<Long> longArgumentCaptor;
     List<Employee> employees;
     Employee employee;
-    String email;
-    Department department;
-    int id;
+    EmployeeDto dto;
+    Long id;
 
     @BeforeEach
     public void init() {
-        department = DepartmentFixture.createDepartment();
         employee = EmployeeFixture.createEmployee();
-        employees = List.of(employee, new Employee());
-        employeeRequest = EmployeeRequestFixture.createEmployeeRequest();
-        email = "employee_test@gmail.com";
+        employees = List.of(employee);
+        dto = EmployeeRequestFixture.createEmployeeRequest();
+        id = 3L;
     }
-
-    @Test
-    void save() {
-        employeeService.save(employeeRequest, department);
-        verify(employeeRepository).save(employeeArgumentCaptor.capture());
-        Employee employee = employeeArgumentCaptor.getValue();
-        assertThat(employee.getName()).isEqualTo(employeeRequest.getName());
-        assertThat(employee.getEmail()).isEqualTo(employeeRequest.getEmail());
-        assertThat(employee.getPhone()).isEqualTo(employeeRequest.getPhone());
-        assertThat(employee.getDateOfBirth()).isEqualTo(employeeRequest.getDateOfBirth());
-        assertThat(employee.getDepartment()).isEqualTo(department);
-    }
-
-    @Test
-    void isUnique_whenTheSameEmployee_thanReturnsTrue() {
-        when(employeeRepository.findOneByEmail(anyString())).thenReturn(employee);
-        boolean result = employeeService.isUnique(employee.getEmail(), employee.getId());
-        verify(employeeRepository).findOneByEmail(stringArgumentCaptor.capture());
-        String employeeEmail = stringArgumentCaptor.getValue();
-        assertThat(employeeEmail).isEqualTo(employee.getEmail());
-        assertThat(result).isEqualTo(true);
-    }
-
-    @Test
-    void isUnique_whenEmailIsUnique_thanReturnsTrue() {
-        id = 4;
-        when(employeeRepository.findOneByEmail(anyString())).thenReturn(null);
-        boolean result = employeeService.isUnique(email, id);
-        verify(employeeRepository).findOneByEmail(stringArgumentCaptor.capture());
-        String employeeEmail = stringArgumentCaptor.getValue();
-        assertThat(employeeEmail).isEqualTo(email);
-        assertThat(result).isEqualTo(true);
-    }
-
-    @Test
-    void isUnique_whenEmailIsNotUnique_thanReturnsFalse() {
-        id = 12;
-        when(employeeRepository.findOneByEmail(anyString())).thenReturn(employee);
-        boolean result = employeeService.isUnique(employee.getEmail(), id);
-        verify(employeeRepository).findOneByEmail(stringArgumentCaptor.capture());
-        String employeeEmail = stringArgumentCaptor.getValue();
-        assertThat(employeeEmail).isEqualTo(employee.getEmail());
-        assertThat(result).isEqualTo(false);
-    }
-
     @Test
     void findAll() {
-        when(employeeRepository.findAll()).thenReturn(employees);
-        Iterable<Employee> employeeIterable = employeeService.findAll();
-        List<Employee> employeeList = StreamSupport.stream(employeeIterable.spliterator(), false)
-                .collect(Collectors.toList());
-        assertThat(employeeList.size()).isEqualTo(employeeList.size());
-        assertThat(employeeList.stream().findFirst().get()).isEqualTo(employee);
+        when(employeeRepository.findByActiveTrueAndDepartmentActiveTrue()).thenReturn(employees);
+        List<Employee> actualEmployees = employeeService.findAll();
+        assertThat(employees).isEqualTo(actualEmployees);
     }
 
     @Test
-    void delete() {
-        when(employeeRepository.findById(anyInt())).thenReturn(Optional.ofNullable(employee));
-        employeeService.delete(employee.getId());
-        verify(employeeRepository).delete(employeeArgumentCaptor.capture());
-        Employee employee1 = employeeArgumentCaptor.getValue();
-        assertThat(employee.getId()).isEqualTo(employee1.getId());
-    }
-
-    @Test
-    void update() {
-        when(employeeRepository.findById(anyInt())).thenReturn(Optional.of(employee));
-        employeeService.update(employeeRequest, department);
+    void create() {
+        employeeService.create(dto, DepartmentFixture.createDepartment());
         verify(employeeRepository).save(employeeArgumentCaptor.capture());
-        Employee employee = employeeArgumentCaptor.getValue();
-        assertThat(employeeRequest.getId()).isEqualTo(employee.getId());
-        assertThat(employeeRequest.getName()).isEqualTo(employee.getName());
-        assertThat(employeeRequest.getEmail()).isEqualTo(employee.getEmail());
-        assertThat(employeeRequest.getPhone()).isEqualTo(employee.getPhone());
-        assertThat(employeeRequest.getDateOfBirth()).isEqualTo(employee.getDateOfBirth());
-        assertThat(department).isEqualTo(employee.getDepartment());
+        Employee actualEmployee = employeeArgumentCaptor.getValue();
+        assertThat(actualEmployee.getName()).isEqualTo(dto.getName());
+        assertThat(actualEmployee.getPhone()).isEqualTo(dto.getPhone());
+        assertThat(actualEmployee.getEmail()).isEqualTo(dto.getEmail());
+        assertThat(actualEmployee.getDateOfBirth()).isEqualTo(dto.getDateOfBirth());
+        assertThat(actualEmployee.getDepartment().getId()).isEqualTo(dto.getDepartmentId());
     }
 
     @Test
     void findById() {
-        when(employeeRepository.findById(anyInt())).thenReturn(Optional.ofNullable(employee));
+        when(employeeRepository.findByIdAndActiveTrue(anyLong())).thenReturn(Optional.ofNullable(employee));
         employeeService.findById(employee.getId());
-        verify(employeeRepository).findById(integerArgumentCaptor.capture());
-        int id = integerArgumentCaptor.getValue();
+        verify(employeeRepository).findByIdAndActiveTrue(longArgumentCaptor.capture());
+        id = longArgumentCaptor.getValue();
         assertThat(id).isEqualTo(employee.getId());
+    }
+
+    @Test
+    void update() {
+        employeeService.update(employee, dto, DepartmentFixture.createDepartment());
+        verify(employeeRepository).save(employeeArgumentCaptor.capture());
+        Employee actualEmployee = employeeArgumentCaptor.getValue();
+        assertThat(actualEmployee.getName()).isEqualTo(dto.getName());
+        assertThat(actualEmployee.getPhone()).isEqualTo(dto.getPhone());
+        assertThat(actualEmployee.getEmail()).isEqualTo(dto.getEmail());
+        assertThat(actualEmployee.getDateOfBirth()).isEqualTo(dto.getDateOfBirth());
+        assertThat(actualEmployee.getDepartment().getId()).isEqualTo(dto.getDepartmentId());
+    }
+
+    @Test
+    void delete() {
+        employeeService.delete(employee);
+        verify(employeeRepository).save(employeeArgumentCaptor.capture());
+        Employee actualEmployee = employeeArgumentCaptor.getValue();
+        assertThat(actualEmployee.getId()).isEqualTo(dto.getId());
+        assertThat(actualEmployee.getActive()).isFalse();
     }
 }

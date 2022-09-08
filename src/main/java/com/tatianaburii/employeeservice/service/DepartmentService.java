@@ -3,16 +3,19 @@ package com.tatianaburii.employeeservice.service;
 import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface DepartmentService {
-    Iterable<Department> findAll();
+    List<Department> findAll();
 
-    Department findById(int id);
+    Optional<Department> findById(Long id);
 
-    Department save(DepartmentDto departmentDto);
+    Department create(DepartmentDto departmentDto);
 
-    void delete(int id);
+    void delete(Department department);
 
-    boolean isUnique(String name, int id);
+    boolean isUnique(String name);
 
-    void update(DepartmentDto departmentDto);
+    void update(Department department, DepartmentDto departmentDto);
 }

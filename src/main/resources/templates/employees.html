@@ -16,8 +16,10 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Mobile Phone</th>
                 <th>Date of birth</th>
                 <th>Created_At</th>
+                <th>Active</th>
                 <th>Department</th>
                 <th>Edit</th>
                 <th>Delete</th>
@@ -28,8 +30,10 @@
                 <td th:text="${employee.id}"></td>
                 <td th:text="${employee.name}"></td>
                 <td th:text="${employee.email}"></td>
+                <td th:text="${employee.phone}"></td>
                 <td th:text="${employee.dateOfBirth}"></td>
                 <td th:text="${employee.createdAt}"></td>
+                <td th:text="${employee.active}"></td>
                 <td th:text="${employee.department.name}"></td>
                 <td><a th:href="@{/employees/{id}/update(id=${employee.id})}">Edit</a></td>
                 <td><a th:href="@{/employees/{id}/delete(id=${employee.id})}">Delete</a></td>

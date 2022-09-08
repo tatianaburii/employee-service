@@ -3,7 +3,7 @@ package com.tatianaburii.employeeservice.service;
 import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.DepartmentFixture;
-import com.tatianaburii.employeeservice.domain.DepartmentRequestFixture;
+import com.tatianaburii.employeeservice.api.dto.DepartmentRequestFixture;
 import com.tatianaburii.employeeservice.repository.DepartmentRepository;
 import com.tatianaburii.employeeservice.service.imlp.DepartmentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,113 +17,71 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceTest {
-    @Mock
-    private DepartmentRepository departmentRepository;
-    @InjectMocks
-    DepartmentServiceImpl departmentService;
-    @Captor
-    ArgumentCaptor<Department> departmentArgumentCaptor;
-    @Captor
-    ArgumentCaptor<Integer> integerArgumentCaptor;
-    @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
-    DepartmentDto departmentRequest;
-    Department department;
-    List<Department> departments;
-    String name;
-    int id;
+  @Mock
+  DepartmentRepository departmentRepository;
+  @InjectMocks
+  DepartmentServiceImpl departmentService;
+  @Captor
+  ArgumentCaptor<Department> departmentArgumentCaptor;
+  @Captor
+  ArgumentCaptor<Long> longArgumentCaptor;
+  List<Department> departments;
+  Department department;
+  DepartmentDto dto;
+  Long id;
 
-    @BeforeEach
-    public void init() {
-        department = DepartmentFixture.createDepartment();
-        departmentRequest = DepartmentRequestFixture.createDepartmentRequest();
-        departments = List.of(department, new Department());
-        name = "name1";
-    }
+  @BeforeEach
+  public void init() {
+    department = DepartmentFixture.createDepartment();
+    departments = List.of(department);
+    dto = DepartmentRequestFixture.createDepartmentRequest();
+    id = 3L;
+  }
+  @Test
+  void findAll() {
+    when(departmentRepository.findByActiveTrue()).thenReturn(departments);
+    List<Department> actualDepartments = departmentService.findAll();
+    assertThat(departments).isEqualTo(actualDepartments);
+  }
 
-    @Test
-    void saveDepartmentTest() {
-        departmentService.save(departmentRequest);
-        verify(departmentRepository).save(departmentArgumentCaptor.capture());
-        Department department = departmentArgumentCaptor.getValue();
-        assertThat(department.getName()).isEqualTo(departmentRequest.getName());
-    }
+  @Test
+  void create() {
+    departmentService.create(dto);
+    verify(departmentRepository).save(departmentArgumentCaptor.capture());
+    Department actualDepartment = departmentArgumentCaptor.getValue();
+    assertThat(actualDepartment.getName()).isEqualTo(dto.getName());
+  }
 
-    @Test
-    void isUnique_whenTheSameDepartment_thanReturnsTrue() {
-        when(departmentRepository.findOneByName(anyString())).thenReturn(department);
-        boolean result = departmentService.isUnique(department.getName(), department.getId());
-        verify(departmentRepository).findOneByName(stringArgumentCaptor.capture());
-        String departmentName = stringArgumentCaptor.getValue();
-        assertThat(departmentName).isEqualTo(department.getName());
-        assertThat(result).isEqualTo(true);
-    }
+  @Test
+  void findById() {
+    when(departmentRepository.findByIdAndActiveTrue(anyLong())).thenReturn(Optional.ofNullable(department));
+    departmentService.findById(department.getId());
+    verify(departmentRepository).findByIdAndActiveTrue(longArgumentCaptor.capture());
+    id = longArgumentCaptor.getValue();
+    assertThat(id).isEqualTo(department.getId());
+  }
 
-    @Test
-    void isUnique_whenNameIsUnique_thanReturnsTrue() {
-        id = 1;
-        when(departmentRepository.findOneByName(anyString())).thenReturn(null);
-        boolean result = departmentService.isUnique(name, id);
-        verify(departmentRepository).findOneByName(stringArgumentCaptor.capture());
-        String departmentName = stringArgumentCaptor.getValue();
-        assertThat(departmentName).isEqualTo(name);
-        assertThat(result).isEqualTo(true);
-    }
+  @Test
+  void update() {
+    departmentService.update(department, dto);
+    verify(departmentRepository).save(departmentArgumentCaptor.capture());
+    Department actualDepartment = departmentArgumentCaptor.getValue();
+    assertThat(actualDepartment.getId()).isEqualTo(dto.getId());
+    assertThat(actualDepartment.getName()).isEqualTo(dto.getName());
+  }
 
-    @Test
-    void isUnique_whenNameIsNotUnique_thanReturnsFalse() {
-        id = 6;
-        when(departmentRepository.findOneByName(anyString())).thenReturn(department);
-        boolean result = departmentService.isUnique(name, id);
-        verify(departmentRepository).findOneByName(stringArgumentCaptor.capture());
-        String departmentName = stringArgumentCaptor.getValue();
-        assertThat(departmentName).isEqualTo(name);
-        assertThat(result).isEqualTo(false);
-    }
-
-    @Test
-    void findAll() {
-        when(departmentRepository.findAll()).thenReturn(departments);
-        Iterable<Department> departmentsIterable = departmentService.findAll();
-        List<Department> departmentsList =
-                StreamSupport.stream(departmentsIterable.spliterator(), false)
-                        .collect(Collectors.toList());
-        assertThat(departmentsList.size()).isEqualTo(2);
-    }
-
-    @Test
-    void delete() {
-        when(departmentRepository.findById(anyInt())).thenReturn(Optional.of(department));
-        departmentService.delete(department.getId());
-        verify(departmentRepository).delete(departmentArgumentCaptor.capture());
-        Department department1 = departmentArgumentCaptor.getValue();
-        assertThat(department.getId()).isEqualTo(department1.getId());
-    }
-
-    @Test
-    void update() {
-        when(departmentRepository.findById(anyInt())).thenReturn(Optional.of(department));
-        departmentService.update(departmentRequest);
-        verify(departmentRepository).save(departmentArgumentCaptor.capture());
-        Department department = departmentArgumentCaptor.getValue();
-        assertThat(department.getName()).isEqualTo(departmentRequest.getName());
-    }
-
-    @Test
-    void findById() {
-        when(departmentRepository.findById(anyInt())).thenReturn(Optional.ofNullable(department));
-        departmentService.findById(department.getId());
-        verify(departmentRepository).findById(integerArgumentCaptor.capture());
-        int id = integerArgumentCaptor.getValue();
-        assertThat(id).isEqualTo(department.getId());
-    }
+  @Test
+  void delete() {
+    departmentService.delete(department);
+    verify(departmentRepository).save(departmentArgumentCaptor.capture());
+    Department actualDepartment = departmentArgumentCaptor.getValue();
+    assertThat(actualDepartment.getId()).isEqualTo(dto.getId());
+    assertThat(actualDepartment.getActive()).isFalse();
+  }
 }
