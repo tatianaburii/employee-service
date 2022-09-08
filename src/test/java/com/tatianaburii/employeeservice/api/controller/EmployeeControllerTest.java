@@ -1,10 +1,8 @@
 package com.tatianaburii.employeeservice.api.controller;
 
 import com.tatianaburii.employeeservice.api.dto.EmployeeRequestFixture;
-import com.tatianaburii.employeeservice.api.dto.EmployeeResponseFixture;
 import com.tatianaburii.employeeservice.controller.EmployeeController;
 import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
-import com.tatianaburii.employeeservice.controller.dto.EmployeeResponse;
 import com.tatianaburii.employeeservice.domain.*;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
@@ -43,12 +41,10 @@ class EmployeeControllerTest {
     List<Employee> employees = List.of(EmployeeFixture.createEmployee());
     Employee employee;
     EmployeeDto employeeRequest;
-    EmployeeResponse response;
 
     @BeforeEach
     public void init() {
         employee = EmployeeFixture.createEmployee();
-        response = EmployeeResponseFixture.createEmployeeResponse();
         employeeRequest = EmployeeRequestFixture.createEmployeeRequest();
     }
 
