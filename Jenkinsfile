@@ -21,12 +21,6 @@ pipeline {
                 echo 'Deleting workspace'
                 deleteDir()
             }
-            post {
-                success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts 'target/*.jar'
-                }
-            }
         }
         stage('Env print') {
             steps {
