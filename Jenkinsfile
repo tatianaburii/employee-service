@@ -34,9 +34,9 @@ pipeline {
                     git branch: "${params.BRANCH}", url: 'https://github.com/tatianaburii/employee-service.git'      
                 }
         }
-        stage('Ls work dir') {
+        stage('Build') {
             steps {
-                sh "ls -la"
+                sh "mvn clean install"
             }
         }
 
