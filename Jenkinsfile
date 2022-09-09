@@ -1,13 +1,25 @@
 pipeline {
     agent any
-    tools {
-        maven "3.8.6"
+
+    parameters {
+        gitParameter (  branch: '', 
+                        branchFilter: 'origin/(.*)', 
+                        defaultValue: 'master', 
+                        description: '', 
+                        name: 'BRANCH', 
+                        quickFilterEnabled: true, 
+                        selectedValue: 'TOP', 
+                        sortMode: 'DESCENDING', 
+                        tagFilter: '*', 
+                        type: 'PT_BRANCH', 
+                        useRepository: 'https://github.com/tatianaburii/employee-service.git')
     }
+
     stages {
-        stage('Build') {
+        stage('Delete workspace before build starts') {
             steps {
-                git 'https://github.com/tatianaburii/employee-service.git'
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+                echo 'Deleting workspace'
+                deleteDir()
             }
             post {
                 success {
@@ -16,5 +28,23 @@ pipeline {
                 }
             }
         }
+        stage('Env print') {
+            steps {
+                sh '''
+                    echo $BRANCH
+                '''
+            }
+        }
+        stage('Checkout') {
+            steps{
+                    git branch: "${params.BRANCH}", url: 'https://github.com/tatianaburii/employee-service.git'      
+                }
+        }
+        stage('Ls work dir') {
+            steps {
+                sh "ls -la"
+            }
+        }
+
     }
 }
