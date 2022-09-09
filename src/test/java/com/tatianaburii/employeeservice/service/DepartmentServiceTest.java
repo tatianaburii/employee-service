@@ -23,10 +23,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceTest {
-//     @Mock
-//     private DepartmentRepository departmentRepository;
-//     @Mock
-//     private EmployeeRepository employeeRepository;
+    @Mock
+    private DepartmentRepository departmentRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
     @InjectMocks
     DepartmentServiceImpl departmentService;
     @Captor
