@@ -1,7 +1,5 @@
 package com.tatianaburii.employeeservice.api.dto;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
-
 import java.time.LocalDate;
 
 public class EmployeeRequestFixture {

@@ -1,8 +1,7 @@
 package com.tatianaburii.employeeservice.api.controller;
 
 import com.tatianaburii.employeeservice.api.dto.DepartmentRequestFixture;
-import com.tatianaburii.employeeservice.controller.DepartmentController;
-import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
+import com.tatianaburii.employeeservice.api.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.*;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;

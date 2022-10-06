@@ -1,10 +1,10 @@
-package com.tatianaburii.employeeservice.controller;
+package com.tatianaburii.employeeservice.api.controller;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
+import com.tatianaburii.employeeservice.api.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
-import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
-import com.tatianaburii.employeeservice.exceptions.EmployeeNotFoundException;
+import com.tatianaburii.employeeservice.api.exceptions.DepartmentNotFoundException;
+import com.tatianaburii.employeeservice.api.exceptions.EmployeeNotFoundException;
 import com.tatianaburii.employeeservice.service.DepartmentService;
 import com.tatianaburii.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;

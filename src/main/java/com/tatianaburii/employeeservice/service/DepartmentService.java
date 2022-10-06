@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.service;
 
-import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
+import com.tatianaburii.employeeservice.api.dto.DepartmentDto;
 import com.tatianaburii.employeeservice.domain.Department;
 
 import java.util.List;

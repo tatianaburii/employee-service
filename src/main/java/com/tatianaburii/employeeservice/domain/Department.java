@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.domain;
 
-import com.tatianaburii.employeeservice.controller.dto.DepartmentDto;
+import com.tatianaburii.employeeservice.api.dto.DepartmentDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;

@@ -1,7 +1,6 @@
 package com.tatianaburii.employeeservice.service;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
-import com.tatianaburii.employeeservice.controller.dto.EmployeeResponse;
+import com.tatianaburii.employeeservice.api.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 
