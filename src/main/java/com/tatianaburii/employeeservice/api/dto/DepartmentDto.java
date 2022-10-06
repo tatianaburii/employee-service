@@ -1,4 +1,4 @@
-package com.tatianaburii.employeeservice.controller.dto;
+package com.tatianaburii.employeeservice.api.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

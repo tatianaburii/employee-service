@@ -1,6 +1,6 @@
 package com.tatianaburii.employeeservice.service.imlp;
 
-import com.tatianaburii.employeeservice.controller.dto.EmployeeDto;
+import com.tatianaburii.employeeservice.api.dto.EmployeeDto;
 import com.tatianaburii.employeeservice.domain.Department;
 import com.tatianaburii.employeeservice.domain.Employee;
 import com.tatianaburii.employeeservice.repository.EmployeeRepository;

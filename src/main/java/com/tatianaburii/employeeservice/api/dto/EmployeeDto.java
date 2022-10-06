@@ -1,4 +1,4 @@
-package com.tatianaburii.employeeservice.controller.dto;
+package com.tatianaburii.employeeservice.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

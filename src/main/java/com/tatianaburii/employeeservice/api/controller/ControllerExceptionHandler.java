@@ -1,7 +1,7 @@
-package com.tatianaburii.employeeservice.controller;
+package com.tatianaburii.employeeservice.api.controller;
 
-import com.tatianaburii.employeeservice.exceptions.DepartmentNotFoundException;
-import com.tatianaburii.employeeservice.exceptions.EmployeeNotFoundException;
+import com.tatianaburii.employeeservice.api.exceptions.DepartmentNotFoundException;
+import com.tatianaburii.employeeservice.api.exceptions.EmployeeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

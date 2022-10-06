@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/EMPLOYEE_SERVICE
+    password: test
+    username: EMPLOYEE_SERVICE_USER
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      open-in-view: false
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+server:
+  port: 8090
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+    hibernate: DEBUG
+    autopartner: DEBUG
