@@ -1,4 +1,4 @@
-package com.tatianaburii.employeeservice.api.controller;
+package com.tatianaburii.employeeservice.api;
 
 import com.tatianaburii.employeeservice.api.exceptions.DepartmentNotFoundException;
 import com.tatianaburii.employeeservice.api.exceptions.EmployeeNotFoundException;
